@@ -163,9 +163,16 @@
 (global-set-key (kbd "M-s-<up>")    'shrink-frame)
 (global-set-key (kbd "M-s-<left>")  'shrink-frame-horizontally)
 
-;; Commands to minimize/maximize/fullscreen
+;; Commands to minimize/maximize/normalize/fullscreen
 (global-set-key (kbd "C-x -") 'suspend-frame) ;; same as C-z
 (global-set-key (kbd "C-x +") 'toggle-frame-maximized) ;; same as M-f10
+
+(defun normal-size-frame ()
+  "Sets frame size to normal"
+  (interactive)
+  (when window-system (set-frame-size (selected-frame) 83 36)))
+(global-set-key (kbd "C-x =") 'normal-size-frame)
+
 (global-set-key (kbd "C-x _") 'toggle-frame-fullscreen) ;; same as M-f11
 (global-set-key (kbd "<M-f11>") 'toggle-frame-fullscreen)
 
