@@ -137,15 +137,41 @@
 (global-set-key (kbd "M-<down>") 'forward-paragraph)
 (global-set-key (kbd "M-<up>") 'backward-paragraph)
 
-;; Change window and frame
-(global-set-key (kbd "s-<") 'other-window)
-(global-set-key (kbd "s->") 'other-frame)
+;; Change window (from Wind Move built-in library) : Cmd + arrow
+(windmove-default-keybindings 'super)
 
-;; Window resize
+;; Window resize : Cmd + ctrl + arrow
 (global-set-key (kbd "C-s-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "C-s-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-s-<down>") 'shrink-window)
 (global-set-key (kbd "C-s-<up>") 'enlarge-window)
+(global-set-key (kbd "C-s-=") 'balance-windows)
+
+;; Change frame
+(global-set-key (kbd "s-<") 'other-frame)
+;; (global-set-key (kbd "s->") 'other-frame)
+
+;; Frame movement (from frame-cmds.el) : Cmd + fn + arrow
+(global-set-key (kbd "s-<prior>") 'move-frame-up)
+(global-set-key (kbd "s-<next>") 'move-frame-down)
+(global-set-key (kbd "s-<home>") 'move-frame-left)
+(global-set-key (kbd "s-<end>") 'move-frame-right)
+
+;; Frame resize (from frame-cmds.el) : Cmd + alt + arrow
+(global-set-key (kbd "M-s-<down>")  'enlarge-frame)
+(global-set-key (kbd "M-s-<right>") 'enlarge-frame-horizontally)
+(global-set-key (kbd "M-s-<up>")    'shrink-frame)
+(global-set-key (kbd "M-s-<left>")  'shrink-frame-horizontally)
+
+;; Commands to minimize/maximize/fullscreen
+(global-set-key (kbd "C-x -") 'suspend-frame) ;; same as C-z
+(global-set-key (kbd "C-x +") 'toggle-frame-maximized) ;; same as M-f10
+(global-set-key (kbd "C-x _") 'toggle-frame-fullscreen) ;; same as M-f11
+(global-set-key (kbd "<M-f11>") 'toggle-frame-fullscreen)
+
+;; Zoom in/out
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 
 ;; Use smex by default on Emacs >= 24
 (when (>= emacs-major-version 24)
@@ -154,10 +180,9 @@
   ;; This is your old M-x.
   (global-set-key (kbd "C-c M-x") 'execute-extended-command))
 
-
-;; Find file (C-x C-f utilise ido-find-file dorénavant !).
-;; Utile pour créer un nouveau fichier.
-;; (global-set-key (kbd "C-x f") 'find-file) ne marche pas
+;; C-x C-f now uses ido-find-file.
+;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
+;; Useful to create a new file.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -223,7 +248,8 @@
 
 (when (>= emacs-major-version 24)
 (require 'powerline)
-(powerline-default-theme))
+(powerline-default-theme)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
@@ -290,6 +316,7 @@ are not started from a shell."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CUSTOM 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
