@@ -165,7 +165,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (show-paren-mode 1)
-(electric-pair-mode 1)
+(when (>= emacs-major-version 24)
+  (electric-pair-mode 1))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -220,8 +221,9 @@
 ;;;;    POWERLINE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(when (>= emacs-major-version 24)
 (require 'powerline)
-(powerline-default-theme)
+(powerline-default-theme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
@@ -276,9 +278,10 @@ are not started from a shell."
 
 ;; Alternative : either auto-complete-mode, or company-mode
 
-(autoload 'company-mode "company" nil t)
-(global-company-mode t)
-(setq company-idle-delay 0)
+(when (>= emacs-major-version 24)
+  (autoload 'company-mode "company" nil t)
+  (global-company-mode t)
+  (setq company-idle-delay 0))
 
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
