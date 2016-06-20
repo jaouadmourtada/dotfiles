@@ -11,7 +11,6 @@
 ;;;;
 ;;;;    LOAD PATH
 ;;;;    LOAD PACKAGES
-;;;;    THEMES
 ;;;;    ELPA, MELPA
 ;;;;    KEY BINDINGS
 ;;;;    PARENTHESES
@@ -21,6 +20,7 @@
 ;;;;    GRAPHICAL USER INTERFACE
 ;;;;    FONTS
 ;;;;    POWERLINE
+;;;;    THEMES
 ;;;;    FRAME SIZE
 ;;;;    BACKUP
 ;;;;    AUCTEX
@@ -88,15 +88,6 @@
             (auto-fill-mode 1)
             (if (eq window-system 'x)
                 (font-lock-mode 1))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    THEMES
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Thèmes
-(when (>= emacs-major-version 24)
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    ELPA, MELPA
@@ -237,7 +228,9 @@
 
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-
+(if window-system
+    ()
+  (menu-bar-mode 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FONTS
@@ -245,7 +238,7 @@
 
 (defun use-djvumono ()
   "Switch the current buffer to a DejaVu Sans Mono font."
-  (set-frame-font "DejaVu Sans Mono-13"))
+  (set-frame-font "DejaVu Sans Mono-14"))
 
 (add-hook 'tuareg-mode-hook 'use-djvumono)
 
@@ -253,10 +246,26 @@
 ;;;;    POWERLINE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(when (and (>= emacs-major-version 24) window-system)
+  (require 'powerline)
+  (powerline-default-theme))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    THEMES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Themes
 (when (>= emacs-major-version 24)
-(require 'powerline)
-(powerline-default-theme)
-)
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
+  ;; (require 'powerline) ;; already added
+  (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham
+  ;; moe theme :
+  ;; (require 'moe-theme)
+  ;; (moe-dark) ;; or : moe-light
+  ;; (moe-theme-set-color 'orange) ;; default : blue
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
@@ -283,6 +292,41 @@
 ;; AucTeX : compiler en pdf par défaut
 
 (setq TeX-PDF-mode t)
+
+;; Other AucTeX configuration
+;; see http://www.stefanom.org/setting-up-a-nice-auctex-environment-on-mac-os-x/
+
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
+(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+
+;; Use Skim as viewer, enable source <-> PDF sync
+;; make latexmk available via C-c C-c
+;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+(add-hook 'LaTeX-mode-hook (lambda ()
+  (push
+    '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+      :help "Run latexmk on file")
+    TeX-command-list)))
+(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+
+;; use Skim as default pdf viewer
+;; Skim's displayline is used for forward search (from .tex to .pdf)
+;; option -b highlights the current line; option -g opens Skim in the background
+(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+(setq TeX-view-program-list
+      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+(server-start); start emacs in server mode so that skim can talk to it
+
+;; ~/.latexmkrc :
+;; $pdflatex = 'pdflatex -interaction=nonstopmode -synctex=1 %O %S';
+;; $pdf_previewer = 'open -a skim';
+;; $clean_ext = 'bbl rel %R-blx.bib %R.synctex.gz';
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SHELL
@@ -325,24 +369,4 @@ are not started from a shell."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#e090d7" "#8cc4ff" "#eeeeec"])
- '(custom-enabled-themes (quote (zenburn)))
- ;; either adwaita or misterioso or zenburn or gotham or wombat
- '(custom-safe-themes
-   (quote
-    ("40f6a7af0dfad67c0d4df2a1dd86175436d79fc69ea61614d668a635c2cd94ab" "590759adc4a5bf7a183df81654cce13b96089e026af67d92b5eec658fb3fe22f" "357d5abe6f693f2875bb3113f5c031b7031f21717e8078f90d9d9bc3a14bcbd8" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default)))
- '(doc-view-continuous t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; Try setting themes manually instead of using "custom"
