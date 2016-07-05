@@ -16,7 +16,8 @@
 ;;;;    PARENTHESES
 ;;;;    SCROLLING CUSTOMIZATION
 ;;;;    SPELL CHECKING
-;;;;    LINE NUMBERING
+;;;;    CURSOR
+;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;    GRAPHICAL USER INTERFACE
 ;;;;    FONTS
 ;;;;    POWERLINE
@@ -184,7 +185,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; PARENTHESES
+;;;;    PARENTHESES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (show-paren-mode 1)
@@ -215,12 +216,29 @@
 (setenv "DICTIONARY" "fr")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    LINE NUMBERING
+;;;;    CURSOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when window-system (global-linum-mode t) (setq linum-format "%3d"))
-;; (setq linum-format "%4d \u2502")
+;; (setq-default cursor-type 'bar) ;; bar, box, hbar, hollow, nil
+;; (set-cursor-color 'Orange) ;; see "theme"
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    LINE NUMBERING AND HIGHLIGHTING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when window-system
+  (global-linum-mode t)
+  (setq linum-format "%3d")
+  ;; (setq linum-format "%4d \u2502")
+  ;;
+  ;; hlinum-mode extends linum-mode by to highlight current line number.
+  ;; Available in MELPA
+  (require 'hlinum)
+  (hlinum-activate)
+  ;; (hlinum-deactivate) ;; to deactivate
+  )
+
+;; (global-hl-line-mode) ;; highlights current line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    GRAPHICAL USER INTERFACE
@@ -260,10 +278,11 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
   ;; (require 'powerline) ;; already added
   (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham
+  (set-cursor-color 'Orange) ;; see "cursor"
   ;; moe theme :
   ;; (require 'moe-theme)
-  ;; (moe-dark) ;; or : moe-light
-  ;; (moe-theme-set-color 'orange) ;; default : blue
+  ;; (moe-light) ;; moe-dark or moe-light
+  ;; (moe-theme-set-color 'blue) ;; default : blue
   )
 
 
@@ -358,7 +377,10 @@ are not started from a shell."
 (when (>= emacs-major-version 24)
   (autoload 'company-mode "company" nil t)
   (global-company-mode t)
-  (setq company-idle-delay 0))
+  (setq company-idle-delay 0)
+  ;; (add-hook 'after-init-hook 'company-statistics-mode)
+  ;; uses stats for better auto-completion suggestions
+  )
 
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -370,3 +392,4 @@ are not started from a shell."
 
 
 ;; Try setting themes manually instead of using "custom"
+
