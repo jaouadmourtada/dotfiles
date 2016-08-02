@@ -53,6 +53,8 @@
 (load "frame-fns")
 (load "frame-cmds")  ;; mouvements des frames
 
+;; (load "phh")
+
 ;; (load "minimap") ;; M-x minimap-mode pour activer la minimap.
 ;; Ajouter un hook (longueur <- 108) lorsque l'on enclenche le minimap-mode.
 
@@ -70,10 +72,11 @@
                     ;; when Smex is auto-initialized on its first run.
   )
 
-(load "lua-mode")
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+;; Load lua-mode for Lua programming
+;; (load "lua-mode")
+;; (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+;; (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+;; (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 ;; Use octave-mode for all the *.m files
 (autoload 'octave-mode "octave-mod" nil t)
@@ -226,7 +229,7 @@
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when window-system
+(when (>= emacs-major-version 24)
   (global-linum-mode t)
   (setq linum-format "%3d")
   ;; (setq linum-format "%4d \u2502")
@@ -238,7 +241,7 @@
   ;; (hlinum-deactivate) ;; to deactivate
   )
 
-;; (global-hl-line-mode) ;; highlights current line
+(global-hl-line-mode) ;; highlights current line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    GRAPHICAL USER INTERFACE
@@ -277,12 +280,13 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
   ;; (require 'powerline) ;; already added
-  (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham
-  (set-cursor-color 'Orange) ;; see "cursor"
+  ;; (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham
+  ;; waher, warm-night, zerodark.
+  ;; (set-cursor-color 'Orange) ;; see "cursor". Improves misterioso
   ;; moe theme :
-  ;; (require 'moe-theme)
-  ;; (moe-light) ;; moe-dark or moe-light
-  ;; (moe-theme-set-color 'blue) ;; default : blue
+  (require 'moe-theme)
+  (moe-dark) ;; moe-dark or moe-light
+  ;; (moe-theme-set-color 'orange) ;; default : blue
   )
 
 
@@ -315,7 +319,7 @@
 ;; Other AucTeX configuration
 ;; see http://www.stefanom.org/setting-up-a-nice-auctex-environment-on-mac-os-x/
 
-(setq TeX-auto-save t)
+;; (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
@@ -380,6 +384,7 @@ are not started from a shell."
   (setq company-idle-delay 0)
   ;; (add-hook 'after-init-hook 'company-statistics-mode)
   ;; uses stats for better auto-completion suggestions
+  ;; (setq company-minimum-prefix-length 2) ;; starts autocomplettion sooner
   )
 
 ;; (require 'auto-complete)
