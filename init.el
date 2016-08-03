@@ -285,18 +285,39 @@
   ;; (set-cursor-color 'Orange) ;; see "cursor". Improves misterioso
   ;; moe theme :
   (require 'moe-theme)
-  (moe-dark) ;; moe-dark or moe-light
+  ;; (moe-dark) ;; moe-dark or moe-light
   ;; (moe-theme-set-color 'orange) ;; default : blue
+  ;; (require 'moe-theme-switcher) ;; light theme in the day and dark one at night
+  (defun night-moe-theme ()
+    (interactive)
+    (moe-dark)
+    (moe-theme-set-color 'blue))
+
+  (defun day-moe-theme ()
+    (interactive)
+    (moe-light)
+    (moe-theme-set-color 'orange))
+
+  (defun switch-moe-theme ()
+    (let ((now (string-to-number (format-time-string "%H"))))
+      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
+	  (day-moe-theme)
+	(night-moe-theme))
+      nil))
+
+  (switch-moe-theme)
   )
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when window-system (add-to-list 'default-frame-alist '(width . 83)))
+;; (when window-system (add-to-list 'default-frame-alist '(width . 83)))
 ;; (add-to-list 'default-frame-alist '(height . 33))
-;; (when window-system (set-frame-size (selected-frame) 83 43))
+(when window-system (set-frame-size (selected-frame) 83 36))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
