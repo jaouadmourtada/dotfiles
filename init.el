@@ -10,8 +10,8 @@
 ;;;;    SECTIONS :
 ;;;;
 ;;;;    LOAD PATH
-;;;;    LOAD PACKAGES
 ;;;;    ELPA, MELPA
+;;;;    LOAD PACKAGES
 ;;;;    KEY BINDINGS
 ;;;;    PARENTHESES
 ;;;;    SCROLLING CUSTOMIZATION
@@ -27,6 +27,7 @@
 ;;;;    AUCTEX
 ;;;;    SHELL
 ;;;;    AUTOCOMPLETE
+;;;;    MERLIN
 ;;;;    CUSTOM
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -38,6 +39,20 @@
 
 ;; Tell emacs where your personal elisp library directory is :
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    ELPA, MELPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://melpa.org/packages/")
+   t)
+  (package-initialize))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LOAD PACKAGES
@@ -53,7 +68,11 @@
 (load "frame-fns")
 (load "frame-cmds")  ;; mouvements des frames
 
-;; (load "phh")
+;; aggressive-indent mode
+;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
+(global-aggressive-indent-mode 1) ;; enable all
+;; (add-to-list 'aggressive-indent-excluded-modes 'shell-script-mode)
+;; disable one
 
 ;; (load "minimap") ;; M-x minimap-mode pour activer la minimap.
 ;; Ajouter un hook (longueur <- 108) lorsque l'on enclenche le minimap-mode.
@@ -69,7 +88,7 @@
   (load "smex")
   (require 'smex) ;; Not needed if you use package.el
   (smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
-                    ;; when Smex is auto-initialized on its first run.
+  ;; when Smex is auto-initialized on its first run.
   )
 
 ;; Load lua-mode for Lua programming
@@ -93,17 +112,6 @@
             (if (eq window-system 'x)
                 (font-lock-mode 1))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    ELPA, MELPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://melpa.org/packages/")
-   t)
-  (package-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    KEY BINDINGS
@@ -120,6 +128,9 @@
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
 (global-set-key (kbd "M-n") "~")
+
+(global-set-key (kbd "ESC M-n") "~") ;; to type ~ in a minibuffer
+(global-set-key (kbd "ESC M-o") "œ")
 
 (global-set-key (kbd "M-(") "{")
 (global-set-key (kbd "M-)") "}")
@@ -234,7 +245,7 @@
   (setq linum-format "%3d")
   ;; (setq linum-format "%4d \u2502")
   ;;
-  ;; hlinum-mode extends linum-mode by to highlight current line number.
+  ;; hlinum-mode extends linum-mode to highlight current line number.
   ;; Available in MELPA
   (require 'hlinum)
   (hlinum-activate)
@@ -344,7 +355,7 @@
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
@@ -411,6 +422,20 @@ are not started from a shell."
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    MERLIN
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Add opam emacs directory to the load-path
+(setq opam-share (substring (shell-command-to-string "opam config var share 2> /dev/null") 0 -1))
+(add-to-list 'load-path (concat opam-share "/emacs/site-lisp"))
+;; Load merlin-mode
+(require 'merlin)
+;; Start merlin on ocaml files
+(add-hook 'tuareg-mode-hook 'merlin-mode t)
+(add-hook 'caml-mode-hook 'merlin-mode t)
+;; Take a look at https://github.com/the-lambda-church/merlin for more
+;; information
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CUSTOM 
@@ -418,4 +443,3 @@ are not started from a shell."
 
 
 ;; Try setting themes manually instead of using "custom"
-
