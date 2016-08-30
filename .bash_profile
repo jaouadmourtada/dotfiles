@@ -1,9 +1,9 @@
 alias TeXgraph='"/Volumes/TeXgraph1.95/TeXgraph.app/Contents/MacOS/../Resources/TeXgraph/CmdTeXgraph.sh"'
 
 alias emacs22='/usr/bin/emacs'
-alias emacs23='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
-alias emacs='/Applications/Emacs\ 24.app/Contents/MacOS/Emacs -nw'
-alias Emacs='/Applications/Emacs\ 24.app/Contents/MacOS/Emacs'
+alias emacs23='/Applications/Emacs\ 23.app/Contents/MacOS/Emacs -nw'
+alias emacs='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
+alias Emacs='/Applications/Emacs.app/Contents/MacOS/Emacs'
 alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox'
 alias maple='/Library/Frameworks/Maple.framework/Versions/12/bin/maple'
 alias octave='/Applications/Octave.app/Contents/Resources/bin/octave'
