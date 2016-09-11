@@ -351,7 +351,11 @@
 ;; change backup directory
 (setq backup-directory-alist `(("." . "~/.backups")))
 
-(setq delete-old-versions t)  ;; delete excess backup files silently
+(setq delete-old-versions t ;; delete excess backup files silently
+      kept-new-versions 6   ;; number of recent backups to keep
+      kept-old-versions 2   ;; number of old backups to keep
+      version-control t     ;; version numbers for backup files
+      )  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
