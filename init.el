@@ -131,12 +131,22 @@
 
 (global-set-key (kbd "ESC M-n") "~") ;; to type ~ in a minibuffer
 (global-set-key (kbd "ESC M-o") "œ")
+(global-set-key (kbd "ESC M-a") "æ")
+
+;; (global-set-key (kbd "ESC M-' a") "á")
+;; (global-set-key (kbd "ESC M-' i") "í")
+;; (global-set-key (kbd "ESC M-' o") "ó")
+;; (global-set-key (kbd "ESC M-' u") "ú")
+
+(global-set-key (kbd "ESC M-(") "{")
+(global-set-key (kbd "ESC M-)") "}")
+(global-set-key (kbd "ESC M-5") "[")
+(global-set-key (kbd "ESC M-°") "]")
 
 (global-set-key (kbd "M-(") "{")
 (global-set-key (kbd "M-)") "}")
-
-(global-set-key (kbd "M-5") "[") ;; peut poser problème, car cela supprime
-                                 ;; M-5 (qui revient +/- à C-u 5)
+(global-set-key (kbd "M-5") "[")
+;; peut poser problème, car cela supprime M-5 (qui revient +/- à C-u 5)
 (global-set-key (kbd "M-°") "]")   
 ;; (global-set-key (kbd "C-M-)") "]") ;; alternative
 
@@ -264,6 +274,9 @@
     ()
   (menu-bar-mode 0))
 
+(setq ns-pop-up-frames nil) ;; in OS X, open new files in current frame
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FONTS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -354,6 +367,7 @@
 ;; (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
+(setq TeX-save-query nil) ;; autosave before compiling
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
 ;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
@@ -383,6 +397,10 @@
 ;; $pdf_previewer = 'open -a skim';
 ;; $clean_ext = 'bbl rel %R-blx.bib %R.synctex.gz';
 
+;; Utiliser C-c = pour utiliser reftex et naviguer rapidement dans le
+;; document (utiliser TAB ou ENTER sur une section pour s'y rendre).
+;; Dans Skim, utiliser Cmd+Shift+Click pour aller à la partie correspondante.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SHELL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,8 +414,8 @@ by the user's shell. This is particularly useful under Mac OSX, where GUI apps
 are not started from a shell."
   (interactive)
   (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-  (setenv "PATH" path-from-shell)
-  (setq exec-path (split-string path-from-shell path-separator))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
 
 ;; puis lancer la fonction 'set-exec-path-from-shell-PATH' au début de chaque
 ;; session.
@@ -417,6 +435,7 @@ are not started from a shell."
   ;; (add-hook 'after-init-hook 'company-statistics-mode)
   ;; uses stats for better auto-completion suggestions
   ;; (setq company-minimum-prefix-length 2) ;; starts autocomplettion sooner
+  (add-hook 'after-init-hook 'company-statistics-mode)
   )
 
 ;; (require 'auto-complete)
