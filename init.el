@@ -125,6 +125,10 @@
 ;; (add-hook 'TeX-mode-hook 'my-make-slash-backslash)
 
 ;; Special characters
+
+(setq ns-right-alternate-modif ier nil)
+;; right alt is no longer a meta key !!
+
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
 (global-set-key (kbd "M-n") "~")
@@ -222,14 +226,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq mouse-wheel-scroll-amount '(2 ((shift) . 2) ((control) . nil)))
-                ;; mouse scrolling one/two line at a time
+;; mouse scrolling one/two line at a time
 (setq mouse-wheel-progressive-speed nil)
-                ;; don't accelerate mouse scrolling
+;; don't accelerate mouse scrolling
 (setq mouse-wheel-follow-mouse t)
 ;;(setq scroll-step 1)
-                ;; keyboard scroll one line at a time
+;; keyboard scroll one line at a time
 ;;(setq scroll-conservatively 1000)
-                ;; more conservative keyboard scrolling
+;; more conservative keyboard scrolling
 ;; (setq ring-bell-function 'ignore)    ;;enlever la ring bell
 
 
@@ -324,7 +328,8 @@
 
   (defun switch-moe-theme ()
     (let ((now (string-to-number (format-time-string "%H"))))
-      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
+      ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
+      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
 	  (day-moe-theme)
 	(night-moe-theme))
       nil))
@@ -351,11 +356,13 @@
 ;; change backup directory
 (setq backup-directory-alist `(("." . "~/.backups")))
 
-(setq delete-old-versions t ;; delete excess backup files silently
-      kept-new-versions 6   ;; number of recent backups to keep
-      kept-old-versions 2   ;; number of old backups to keep
-      version-control t     ;; version numbers for backup files
-      )  
+(setq version-control t     ;; Use version numbers for backups.
+      kept-new-versions 6   ;; Number of newest versions to keep.
+      kept-old-versions 2   ;; Number of oldest backups to keep.
+      delete-old-versions t ;; Don't ask to delete excess backup versions.
+      ;; backup-by-copying t  ;; Copy all files, don't rename them.
+      )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
