@@ -126,7 +126,7 @@
 
 ;; Special characters
 
-(setq ns-right-alternate-modif ier nil)
+(setq ns-right-alternate-modifier nil)
 ;; right alt is no longer a meta key !!
 
 (global-set-key (kbd "M-/") "\\")
