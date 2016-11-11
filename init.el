@@ -128,6 +128,7 @@
 
 (setq ns-right-alternate-modifier nil)
 ;; right alt is no longer a meta key !!
+;; note that the following shortcuts now become virtually useless
 
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
@@ -200,6 +201,9 @@
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 
+;; Map C-z to undo (suspend-frame is now C-x -)
+(global-set-key (kbd "C-z") 'undo)
+
 ;; Use smex by default on Emacs >= 24
 (when (>= emacs-major-version 24)
   (global-set-key (kbd "M-x") 'smex)
@@ -242,6 +246,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setenv "DICTIONARY" "fr")
+;; (setenv "DICTIONARY" "en_US")
+
+(add-hook 'TeX-language-fr-hook
+	  (lambda () (ispell-change-dictionary "fr")))
+
+(add-hook 'TeX-language-en-hook
+	  (lambda () (ispell-change-dictionary "en_US")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CURSOR
@@ -273,7 +284,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+;; (scroll-bar-mode -1)
 (if window-system
     ()
   (menu-bar-mode 0))
@@ -284,6 +295,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FONTS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (set-frame-font "Monaco-12")
+(add-to-list 'default-frame-alist '(font . "Monaco-12"))
 
 (defun use-djvumono ()
   "Switch the current buffer to a DejaVu Sans Mono font."
@@ -361,6 +375,7 @@
       kept-old-versions 2   ;; Number of oldest backups to keep.
       delete-old-versions t ;; Don't ask to delete excess backup versions.
       ;; backup-by-copying t  ;; Copy all files, don't rename them.
+      delete-by-moving-to-trash t
       )
 
 
