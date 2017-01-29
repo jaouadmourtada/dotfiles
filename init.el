@@ -15,6 +15,7 @@
 ;;;;    KEY BINDINGS
 ;;;;    PARENTHESES
 ;;;;    SCROLLING CUSTOMIZATION
+;;;;    IDO
 ;;;;    SPELL CHECKING
 ;;;;    CURSOR
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
@@ -24,6 +25,7 @@
 ;;;;    THEMES
 ;;;;    FRAME SIZE
 ;;;;    BACKUP
+;;;;    ORG
 ;;;;    AUCTEX
 ;;;;    SHELL
 ;;;;    AUTOCOMPLETE
@@ -76,12 +78,6 @@
 
 ;; (load "minimap") ;; M-x minimap-mode pour activer la minimap.
 ;; Ajouter un hook (longueur <- 108) lorsque l'on enclenche le minimap-mode.
-
-(when (>= emacs-major-version 24)
-  (require 'ido-vertical-mode)
-  (ido-mode 1)
-  (ido-vertical-mode 1)
-  (setq ido-vertical-define-keys 'C-n-C-p-up-and-down))
 
 ;; Auto-start Smex every time you open Emacs.
 (when (>= emacs-major-version 24)
@@ -161,28 +157,29 @@
 ;; Change window (from Wind Move built-in library) : Cmd + arrow
 (windmove-default-keybindings 'super)
 
-;; Window resize : Cmd + ctrl + arrow
-(global-set-key (kbd "C-s-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "C-s-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "C-s-<down>") 'shrink-window)
-(global-set-key (kbd "C-s-<up>") 'enlarge-window)
+;; Window resize : fn + ctrl + arrow
+(global-set-key (kbd "C-<prior>") 'enlarge-window)
+(global-set-key (kbd "C-<next>") 'shrink-window)
+(global-set-key (kbd "C-<home>") 'shrink-window-horizontally)
+(global-set-key (kbd "C-<end>") 'enlarge-window-horizontally)
+
 (global-set-key (kbd "C-s-=") 'balance-windows)
 
-;; Change frame
-(global-set-key (kbd "s-<") 'other-frame)
-;; (global-set-key (kbd "s->") 'other-frame)
+;; Frame resize (from frame-cmds.el) : fn + alt + arrow
+(global-set-key (kbd "M-<prior>")    'shrink-frame)
+(global-set-key (kbd "M-<next>")  'enlarge-frame)
+(global-set-key (kbd "M-<home>")  'shrink-frame-horizontally)
+(global-set-key (kbd "M-<end>") 'enlarge-frame-horizontally)
 
-;; Frame movement (from frame-cmds.el) : Cmd + fn + arrow
+;; Frame movement (from frame-cmds.el) : fn + Cmd + arrow
 (global-set-key (kbd "s-<prior>") 'move-frame-up)
 (global-set-key (kbd "s-<next>") 'move-frame-down)
 (global-set-key (kbd "s-<home>") 'move-frame-left)
 (global-set-key (kbd "s-<end>") 'move-frame-right)
 
-;; Frame resize (from frame-cmds.el) : Cmd + alt + arrow
-(global-set-key (kbd "M-s-<down>")  'enlarge-frame)
-(global-set-key (kbd "M-s-<right>") 'enlarge-frame-horizontally)
-(global-set-key (kbd "M-s-<up>")    'shrink-frame)
-(global-set-key (kbd "M-s-<left>")  'shrink-frame-horizontally)
+;; Change frame
+(global-set-key (kbd "s-<") 'other-frame)
+;; (global-set-key (kbd "s->") 'other-frame)
 
 ;; Commands to minimize/maximize/normalize/fullscreen
 (global-set-key (kbd "C-x -") 'suspend-frame) ;; same as C-z
@@ -211,10 +208,6 @@
   ;; This is your old M-x.
   (global-set-key (kbd "C-c M-x") 'execute-extended-command))
 
-;; C-x C-f now uses ido-find-file.
-;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
-;; Useful to create a new file.
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    PARENTHESES
@@ -240,19 +233,77 @@
 ;; more conservative keyboard scrolling
 ;; (setq ring-bell-function 'ignore)    ;;enlever la ring bell
 
+;; Move between buffers by swiping left/right (like C-x left/right)
+;;(global-set-key (kbd "<wheel-right>") 'next-buffer)
+;;(global-set-key (kbd "<wheel-left>") 'previous-buffer)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    IDO
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (>= emacs-major-version 24)
+  (require 'ido-vertical-mode)
+  (ido-mode 1)
+  (ido-vertical-mode 1)
+  (setq ido-everywhere t)
+  (require 'ido-ubiquitous)
+  (ido-ubiquitous-mode 1)
+  (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
+  ;;  (setq ido-enable-flex-matching t)
+					; unneeded ?  
+  (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
+				    ".ml" ".sh"))
+  (setq ido-ignore-directories '("~/Applications/" "~/Calibre Library/"
+				 "~/IdeaProjects/" "~/Library/" "~/Mail/"
+				 "~/Movies/" "~/Music/" "~/News/" "~/Pictures/"
+				 "~/Public/" "~/PycharmProjects/" "~/Sites/"))
+  (defun ido-ignore-non-user-except (name)
+    "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
+    (and (string-match "^\*" name)
+	 (not (string= name "*scratch*"))
+	 (not (string= name "*GNU Emacs*"))))
+  (setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
+  (setq ido-ignore-extensions t)
+  (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
+					".blg" ".fdb_latexmk" ".fls" ".gz"
+					".pdf" ".log" ".toc" ".DS_Store"
+					".mp3" ".mp4" ".mkv" "e.el"))
+  (setq ido-use-virtual-buffers t)
+					; keeps track of recently opened buffers
+  (require 'recentf)
+  (recentf-mode 1)
+  (setq recentf-max-saved-items 40
+	recentf-exclude 
+	(append recentf-exclude
+		'("~/.emacs.d/el-get/" "~$" "Library/" 
+		  "~/.emacs.d/elpa/" "~/.emacs.d/url/"
+		  "~/.emacs.d/company-statistics-cache.el")
+					; does not appear to work...
+		)
+	)
+  (setq ido-max-work-file-list 20)
+  ;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
+  ;; requires that package ido-sort-mtime is installed
+  )
+
+;; C-x C-f now uses ido-find-file.
+;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
+;; Useful to create a new file.
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SPELL CHECKING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setenv "DICTIONARY" "fr")
-;; (setenv "DICTIONARY" "en_US")
+					;(setenv "DICTIONARY" "en_US")
 
-(add-hook 'TeX-language-fr-hook
-	  (lambda () (ispell-change-dictionary "fr")))
+					;(add-hook 'TeX-language-fr-hook
+					;(lambda () (ispell-change-dictionary "fr")))
 
-(add-hook 'TeX-language-en-hook
-	  (lambda () (ispell-change-dictionary "en_US")))
+					;(add-hook 'TeX-language-en-hook
+					;(lambda () (ispell-change-dictionary "en_US")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CURSOR
@@ -378,6 +429,12 @@
       delete-by-moving-to-trash t
       )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    ORG
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (add-hook 'org-mode-hook 'use-)
+;; M-<left/right> org-do-promote/demote
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
@@ -488,3 +545,17 @@ are not started from a shell."
 
 
 ;; Try setting themes manually instead of using "custom"
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ido-sort-mtime ido-ubiquitous zerodark-theme zenburn-theme yasnippet warm-night-theme waher-theme s powerline popup moe-theme hlinum gotham-theme company-statistics caml auctex aggressive-indent))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
