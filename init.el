@@ -254,10 +254,11 @@
 					; unneeded ?  
   (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
 				    ".ml" ".sh"))
-  (setq ido-ignore-directories '("~/Applications/" "~/Calibre Library/"
-				 "~/IdeaProjects/" "~/Library/" "~/Mail/"
-				 "~/Movies/" "~/Music/" "~/News/" "~/Pictures/"
-				 "~/Public/" "~/PycharmProjects/" "~/Sites/"))
+  (setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
+				 "Applications" "Calibre Library/"
+				 "IdeaProjects/" "Library/" "Mail/"
+				 "Movies/" "Music/" "News/" "Pictures/"
+				 "Public/" "PycharmProjects/" "Sites/"))
   (defun ido-ignore-non-user-except (name)
     "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
     (and (string-match "^\*" name)
@@ -267,8 +268,9 @@
   (setq ido-ignore-extensions t)
   (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
 					".blg" ".fdb_latexmk" ".fls" ".gz"
-					".pdf" ".log" ".toc" ".DS_Store"
-					".mp3" ".mp4" ".mkv" "e.el"))
+					".cls" ".sty" ".pdf" ".log" ".toc"
+					".DS_Store" ".mp3" ".mp4" ".mkv"
+					"e.el"))
   (setq ido-use-virtual-buffers t)
 					; keeps track of recently opened buffers
   (require 'recentf)
@@ -278,7 +280,7 @@
 	(append recentf-exclude
 		'("~/.emacs.d/el-get/" "~$" "Library/" 
 		  "~/.emacs.d/elpa/" "~/.emacs.d/url/"
-		  "~/.emacs.d/company-statistics-cache.el")
+		  "company-statistics-cache.el")
 					; does not appear to work...
 		)
 	)
