@@ -12,7 +12,7 @@ export DICTIONARY=fr
 
 export PS1="\[\e[1m\]\h:\W \u\$ \[\e[0m\]"  #bold prompt
 
-export PATH="/usr/local/bin/:$PATH"
+export PATH="/usr/local/bin:$PATH"
 
 # OPAM configuration
 . /Users/jaouadmourtada/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
