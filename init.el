@@ -1,14 +1,13 @@
-;;; Mon fichier .emacs (fichier init.el)
-;; Contient mes préférences.
+;;; .emacs file (~/.emacs.d/init.el)
+;; Emacs setup.
 
-;; POUR NE PAS AVOIR À REDÉMARRER EMACS À CHAQUE CHANGEMENT DU .EMACS,
-;; TAPER C-x C-e à la fin de chaque expression nouvelle (expression elisp
-;; à évaluer).
+;; Type C-x C-e at the end of any new expression to evaluate it
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SECTIONS :
 ;;;;
+;;;;    STARTUP
 ;;;;    LOAD PATH
 ;;;;    ELPA, MELPA
 ;;;;    LOAD PACKAGES
@@ -36,11 +35,20 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    STARTUP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; get rid of the starting screen
+(setq inhibit-splash-screen t)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LOAD PATH
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Tell emacs where your personal elisp library directory is :
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+;; (add-to-list 'load-path "~/.emacs.d/lisp/")
+;; no longer necessary
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,13 +70,16 @@
 
 ;; load the packaged named xyz :
 ;; (load "xyz") ;; best not to include the ending “.el” or “.elc”
+
+;; with autoloads (lazy loading; unsure if works)
+;;(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+;;(autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
+
+;; without autoloads (works but slow)
 (load "tuareg")
 (load "ocamldebug")
 (load "tuareg_indent")
 (load "tuareg-site-file")
-
-(load "frame-fns")
-(load "frame-cmds")  ;; mouvements des frames
 
 ;; aggressive-indent mode
 ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
@@ -76,8 +87,8 @@
 ;; (add-to-list 'aggressive-indent-excluded-modes 'shell-script-mode)
 ;; disable one
 
-;; (load "minimap") ;; M-x minimap-mode pour activer la minimap.
-;; Ajouter un hook (longueur <- 108) lorsque l'on enclenche le minimap-mode.
+;; (load "minimap") ;; M-x minimap-mode to activate minimap.
+;; add a hook (length <- 108) for minimap-mode.
 
 ;; Auto-start Smex every time you open Emacs.
 (when (>= emacs-major-version 24)
@@ -87,11 +98,6 @@
   ;; when Smex is auto-initialized on its first run.
   )
 
-;; Load lua-mode for Lua programming
-;; (load "lua-mode")
-;; (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-;; (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-;; (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 ;; Use octave-mode for all the *.m files
 (autoload 'octave-mode "octave-mod" nil t)
@@ -113,12 +119,6 @@
 ;;;;    KEY BINDINGS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Mes keybindings persos (peuvent être changés si besoin est)
-
-;; (global-set-key (quote [s-up]) (quote beginning-of-buffer))
-;; (global-set-key (quote [s-down]) (quote end-of-buffer))
-
-;; (add-hook 'TeX-mode-hook 'my-make-slash-backslash)
 
 ;; Special characters
 
@@ -139,17 +139,10 @@
 ;; (global-set-key (kbd "ESC M-' o") "ó")
 ;; (global-set-key (kbd "ESC M-' u") "ú")
 
-(global-set-key (kbd "ESC M-(") "{")
-(global-set-key (kbd "ESC M-)") "}")
-(global-set-key (kbd "ESC M-5") "[")
-(global-set-key (kbd "ESC M-°") "]")
-
 (global-set-key (kbd "M-(") "{")
 (global-set-key (kbd "M-)") "}")
 (global-set-key (kbd "M-5") "[")
-;; peut poser problème, car cela supprime M-5 (qui revient +/- à C-u 5)
 (global-set-key (kbd "M-°") "]")   
-;; (global-set-key (kbd "C-M-)") "]") ;; alternative
 
 (global-set-key (kbd "M-<down>") 'forward-paragraph)
 (global-set-key (kbd "M-<up>") 'backward-paragraph)
@@ -165,17 +158,22 @@
 
 (global-set-key (kbd "C-s-=") 'balance-windows)
 
-;; Frame resize (from frame-cmds.el) : fn + alt + arrow
-(global-set-key (kbd "M-<prior>")    'shrink-frame)
-(global-set-key (kbd "M-<next>")  'enlarge-frame)
-(global-set-key (kbd "M-<home>")  'shrink-frame-horizontally)
-(global-set-key (kbd "M-<end>") 'enlarge-frame-horizontally)
 
-;; Frame movement (from frame-cmds.el) : fn + Cmd + arrow
-(global-set-key (kbd "s-<prior>") 'move-frame-up)
-(global-set-key (kbd "s-<next>") 'move-frame-down)
-(global-set-key (kbd "s-<home>") 'move-frame-left)
-(global-set-key (kbd "s-<end>") 'move-frame-right)
+;;;; Frames movements
+;;(load "frame-fns")
+;;(load "frame-cmds")
+;;
+;;;; Frame resize (from frame-cmds.el) : fn + alt + arrow
+;;(global-set-key (kbd "M-<prior>")    'shrink-frame)
+;;(global-set-key (kbd "M-<next>")  'enlarge-frame)
+;;(global-set-key (kbd "M-<home>")  'shrink-frame-horizontally)
+;;(global-set-key (kbd "M-<end>") 'enlarge-frame-horizontally)
+;;
+;;;; Frame movement (from frame-cmds.el) : fn + Cmd + arrow
+;;(global-set-key (kbd "s-<prior>") 'move-frame-up)
+;;(global-set-key (kbd "s-<next>") 'move-frame-down)
+;;(global-set-key (kbd "s-<home>") 'move-frame-left)
+;;(global-set-key (kbd "s-<end>") 'move-frame-right)
 
 ;; Change frame
 (global-set-key (kbd "s-<") 'other-frame)
@@ -250,15 +248,14 @@
   (require 'ido-ubiquitous)
   (ido-ubiquitous-mode 1)
   (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
-  ;;  (setq ido-enable-flex-matching t)
-					; unneeded ?  
+  ;;  (setq ido-enable-flex-matching t)		; unneeded ?  
   (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
 				    ".ml" ".sh"))
   (setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
 				 "Applications" "Calibre Library/"
-				 "IdeaProjects/" "Library/" "Mail/"
-				 "Movies/" "Music/" "News/" "Pictures/"
-				 "Public/" "PycharmProjects/" "Sites/"))
+				 "Library/" "Mail/" "Movies/"
+				 "Music/" "News/" "Pictures/"
+				 "Public/" "Sites/"))
   (defun ido-ignore-non-user-except (name)
     "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
     (and (string-match "^\*" name)
@@ -280,8 +277,9 @@
 	(append recentf-exclude
 		'("~/.emacs.d/el-get/" "~$" "Library/" 
 		  "~/.emacs.d/elpa/" "~/.emacs.d/url/"
-		  "company-statistics-cache.el")
-					; does not appear to work...
+		  "company-statistics-cache.el"
+		  "[:ascii:]*loads.el"
+		  "[:ascii:]*.log")
 		)
 	)
   (setq ido-max-work-file-list 20)
@@ -298,7 +296,7 @@
 ;;;;    SPELL CHECKING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setenv "DICTIONARY" "fr")
+					;(setenv "DICTIONARY" "fr")
 					;(setenv "DICTIONARY" "en_US")
 
 					;(add-hook 'TeX-language-fr-hook
@@ -351,6 +349,8 @@
 
 ;; (set-frame-font "Monaco-12")
 (add-to-list 'default-frame-alist '(font . "Monaco-12"))
+;; On Ubuntu:
+;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
 
 (defun use-djvumono ()
   "Switch the current buffer to a DejaVu Sans Mono font."
@@ -382,7 +382,7 @@
   (require 'moe-theme)
   ;; (moe-dark) ;; moe-dark or moe-light
   ;; (moe-theme-set-color 'orange) ;; default : blue
-  ;; (require 'moe-theme-switcher) ;; light theme in the day and dark one at night
+  ;; (require 'moe-theme-switcher) ;; day: light theme, night: dark theme
   (defun night-moe-theme ()
     (interactive)
     (moe-dark)
@@ -393,15 +393,16 @@
     (moe-light)
     (moe-theme-set-color 'orange))
 
-  (defun switch-moe-theme ()
-    (let ((now (string-to-number (format-time-string "%H"))))
-      ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
-      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
-	  (day-moe-theme)
-	(night-moe-theme))
-      nil))
-
-  (switch-moe-theme)
+  ;;  (defun switch-moe-theme ()  
+  ;;    (let ((now (string-to-number (format-time-string "%H"))))
+  ;;  ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
+  ;;      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
+  ;;      (day-moe-theme)
+  ;;     (night-moe-theme))
+  ;;      nil))      
+  ;; 
+  ;; (switch-moe-theme)  
+  (day-moe-theme)
   )
 
 
@@ -437,6 +438,9 @@
 
 ;; (add-hook 'org-mode-hook 'use-)
 ;; M-<left/right> org-do-promote/demote
+
+(add-hook 'org-mode-hook (lambda () (set-input-method "TeX")))
+(global-set-key (kbd "C-c a") 'org-agenda)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
@@ -490,22 +494,12 @@
 ;;;;    SHELL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Adapter la variable d'environnement $PATH sous Emacs, qui contient moins de
-;; chemins que sous le terminal.
+;; Ensure environment variables inside GUI Emacs in OS X are the same
+;; as in the user's shell
 
-(defun set-exec-path-from-shell-PATH ()
-  "Set up Emacs' `exec-path' and PATH environment variable to match that used 
-by the user's shell. This is particularly useful under Mac OSX, where GUI apps
-are not started from a shell."
-  (interactive)
-  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
 
-;; puis lancer la fonction 'set-exec-path-from-shell-PATH' au début de chaque
-;; session.
-
-(set-exec-path-from-shell-PATH)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUTOCOMPLETE
@@ -531,13 +525,17 @@ are not started from a shell."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Add opam emacs directory to the load-path
-(setq opam-share (substring (shell-command-to-string "opam config var share 2> /dev/null") 0 -1))
-(add-to-list 'load-path (concat opam-share "/emacs/site-lisp"))
-;; Load merlin-mode
-(require 'merlin)
-;; Start merlin on ocaml files
-(add-hook 'tuareg-mode-hook 'merlin-mode t)
-(add-hook 'caml-mode-hook 'merlin-mode t)
+(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
+						     "share")))))
+  (when (and opam-share (file-directory-p opam-share))
+    ;; Register Merlin
+    (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+    (autoload 'merlin-mode "merlin" nil t nil)
+    ;; Automatically start it in OCaml buffers
+    (add-hook 'tuareg-mode-hook 'merlin-mode t)
+    (add-hook 'caml-mode-hook 'merlin-mode t)
+    ;; Use opam switch to lookup ocamlmerlin binary
+    (setq merlin-command 'opam)))
 ;; Take a look at https://github.com/the-lambda-church/merlin for more
 ;; information
 
@@ -552,9 +550,12 @@ are not started from a shell."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-files (quote ("~/Dropbox/these/todo-these.org")))
  '(package-selected-packages
    (quote
-    (ido-sort-mtime ido-ubiquitous zerodark-theme zenburn-theme yasnippet warm-night-theme waher-theme s powerline popup moe-theme hlinum gotham-theme company-statistics caml auctex aggressive-indent))))
+    (exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent tuareg frame-fns frame-cmds))))
+;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
+;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
