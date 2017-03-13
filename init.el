@@ -296,14 +296,44 @@
 ;;;;    SPELL CHECKING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-					;(setenv "DICTIONARY" "fr")
-					;(setenv "DICTIONARY" "en_US")
 
-					;(add-hook 'TeX-language-fr-hook
-					;(lambda () (ispell-change-dictionary "fr")))
 
-					;(add-hook 'TeX-language-en-hook
-					;(lambda () (ispell-change-dictionary "en_US")))
+;; Emacs 24.4 considerably improves support for Hunspell, and is now
+;; able to use Hunspell automatically with only little further
+;; customization. Notably, Emacs can now discover available Hunspell
+;; dictionaries, and fills ispell-dictionary-alist
+;; automatically. Essentially, you just need the following to tell
+;; Emacs to use hunspell:
+					; (setq ispell-program-name (executable-find "hunspell"))
+;; Besides language-specific dictioniaries, you also need to have a
+;; “default” dictionary for Emacs. This dictionary needs to be named
+;; default, literally. Creating it is easy enough, though. Just create
+;; symlinks to the dictionaries of your preferred language:
+;; 
+;; $ cd ~/Library/Spelling
+;; $ ln -s en_GB.aff default.aff
+;; $ ln -s en_GB.dic default.dic
+
+
+;;(setenv "DICTIONARY" "fr")
+;;(setenv "DICTIONARY" "en_US")
+
+;;(add-hook 'TeX-language-fr-hook
+;;	  (lambda () (ispell-change-dictionary "fr")))
+
+;;(add-hook 'TeX-language-en-hook
+;;	  (lambda () (ispell-change-dictionary "en_US")))
+
+(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;;(add-hook 'LaTeX-mode-hook 'turn-on-flyspell)
+
+;; (setq ispell-local-dictionary "en_US")
+;; (setq ispell-local-dictionary-alist
+;; Please note the list `("-d" "en_US")` contains ACTUAL parameters passed to hunspell
+;; You could use `("-d" "en_US,en_US-med")` to check with multiple dictionaries
+;; '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
+;;  ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CURSOR
