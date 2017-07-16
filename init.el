@@ -27,6 +27,7 @@
 ;;;;    ORG
 ;;;;    AUCTEX
 ;;;;    SHELL
+;;;;    PYTHON
 ;;;;    AUTOCOMPLETE
 ;;;;    MERLIN
 ;;;;    CUSTOM
@@ -97,7 +98,6 @@
   (smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
   ;; when Smex is auto-initialized on its first run.
   )
-
 
 ;; Use octave-mode for all the *.m files
 (autoload 'octave-mode "octave-mod" nil t)
@@ -206,6 +206,10 @@
   ;; This is your old M-x.
   (global-set-key (kbd "C-c M-x") 'execute-extended-command))
 
+;; use count-words instead of count-words-region as it works on buffer
+;; if no region is selected
+(global-set-key (kbd "M-=") 'count-words)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    PARENTHESES
@@ -245,7 +249,7 @@
   (ido-mode 1)
   (ido-vertical-mode 1)
   (setq ido-everywhere t)
-  (require 'ido-ubiquitous)
+  (require 'ido-completing-read+)
   (ido-ubiquitous-mode 1)
   (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
   ;;  (setq ido-enable-flex-matching t)		; unneeded ?  
@@ -272,7 +276,7 @@
 					; keeps track of recently opened buffers
   (require 'recentf)
   (recentf-mode 1)
-  (setq recentf-max-saved-items 40
+  (setq recentf-max-saved-items 50
 	recentf-exclude 
 	(append recentf-exclude
 		'("~/.emacs.d/el-get/" "~$" "Library/" 
@@ -379,8 +383,10 @@
 
 ;; (set-frame-font "Monaco-12")
 (add-to-list 'default-frame-alist '(font . "Monaco-12"))
+;; (add-to-list 'default-frame-alist '(font . "Liberation Mono-13"))
 ;; On Ubuntu:
 ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
+;; other fonts : liberation mono, menlo, monaco
 
 (defun use-djvumono ()
   "Switch the current buffer to a DejaVu Sans Mono font."
@@ -493,14 +499,18 @@
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
 
+;; Add backends provided by company-auctex to company-backends
+(require 'company-auctex)
+(company-auctex-init)
+
 ;; Use Skim as viewer, enable source <-> PDF sync
 ;; make latexmk available via C-c C-c
 ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
 (add-hook 'LaTeX-mode-hook (lambda ()
-  (push
-    '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-      :help "Run latexmk on file")
-    TeX-command-list)))
+			     (push
+			      '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+				:help "Run latexmk on file")
+			      TeX-command-list)))
 (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
 ;; use Skim as default pdf viewer
@@ -530,6 +540,27 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    PYTHON
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; use elpy for python
+(package-initialize)
+(elpy-enable)
+
+(with-eval-after-load 'python
+  (defun python-shell-completion-native-try ()
+    "Return non-nil if can trigger native completion."
+    (let ((python-shell-completion-native-enable t)
+          (python-shell-completion-native-output-timeout
+           python-shell-completion-native-try-output-timeout))
+      (python-shell-completion-native-get-completions
+       (get-buffer-process (current-buffer))
+       nil "_"))))
+
+;; use ipython (instead of python) as the default shell
+;; make sure ipython is installed
+;; (elpy-use-ipython) ; doesn't work
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUTOCOMPLETE
@@ -573,6 +604,15 @@
 ;;;;    CUSTOM 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Momentary
+(add-hook 'text-mode-hook 'visual-line-mode)
+
+(defun unfill-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+(global-set-key (kbd "M-Q") 'unfill-paragraph)
 
 ;; Try setting themes manually instead of using "custom"
 (custom-set-variables
@@ -580,10 +620,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/Dropbox/these/todo-these.org")))
+ '(org-agenda-files
+   (quote
+    ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
  '(package-selected-packages
    (quote
-    (exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent tuareg frame-fns frame-cmds))))
+    (company-auctex markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent tuareg frame-fns frame-cmds))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
