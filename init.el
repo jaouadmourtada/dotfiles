@@ -73,14 +73,16 @@
 ;; (load "xyz") ;; best not to include the ending “.el” or “.elc”
 
 ;; with autoloads (lazy loading; unsure if works)
-;;(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
-;;(autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
+(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+(autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
+;;(autoload 'tuareg_indent "tuareg_indent" t)
+;;(autoload 'tuareg-site-file "tuareg-site-file" t)
 
 ;; without autoloads (works but slow)
-(load "tuareg")
-(load "ocamldebug")
-(load "tuareg_indent")
-(load "tuareg-site-file")
+;;(load "tuareg")
+;;(load "ocamldebug")
+;;(load "tuareg_indent")
+;;(load "tuareg-site-file")
 
 ;; aggressive-indent mode
 ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
@@ -98,21 +100,6 @@
   (smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
   ;; when Smex is auto-initialized on its first run.
   )
-
-;; Use octave-mode for all the *.m files
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-;; Turn on the abbrevs, auto-fill and font-lock features automatically.
-;; For more details on octave-mode setup and use, see :
-;; https://www.gnu.org/software/octave/doc/interpreter/Emacs-Octave-Support.html
-(add-hook 'octave-mode-hook
-          (lambda ()
-            (abbrev-mode 1)
-            (auto-fill-mode 1)
-            (if (eq window-system 'x)
-                (font-lock-mode 1))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -299,7 +286,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SPELL CHECKING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 
 ;; Emacs 24.4 considerably improves support for Hunspell, and is now
@@ -620,12 +606,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(markdown-command "/usr/local/bin/pandoc")
  '(org-agenda-files
    (quote
     ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
  '(package-selected-packages
    (quote
-    (company-auctex markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent tuareg frame-fns frame-cmds))))
+    (tuareg company-auctex markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
