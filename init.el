@@ -1,7 +1,4 @@
-;;; .emacs file (~/.emacs.d/init.el)
 ;; Emacs setup.
-
-;; Type C-x C-e at the end of any new expression to evaluate it
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,11 +26,14 @@
 ;;;;    SHELL
 ;;;;    PYTHON
 ;;;;    AUTOCOMPLETE
+;;;;    YASNIPPET
 ;;;;    MERLIN
 ;;;;    CUSTOM
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;; Type C-x C-e at the end of an expression to evaluate it
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    STARTUP
@@ -56,13 +56,12 @@
 ;;;;    ELPA, MELPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://melpa.org/packages/")
-   t)
-  (package-initialize))
+(require 'package)
+(add-to-list
+ 'package-archives
+ '("melpa" . "http://melpa.org/packages/")
+ t)
+(package-initialize)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -94,12 +93,10 @@
 ;; add a hook (length <- 108) for minimap-mode.
 
 ;; Auto-start Smex every time you open Emacs.
-(when (>= emacs-major-version 24)
-  (load "smex")
-  (require 'smex) ;; Not needed if you use package.el
-  (smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
-  ;; when Smex is auto-initialized on its first run.
-  )
+(load "smex")
+(require 'smex) ;; Not needed if you use package.el
+(smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
+;; when Smex is auto-initialized on its first run.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,6 +109,9 @@
 (setq ns-right-alternate-modifier nil)
 ;; right alt is no longer a meta key !!
 ;; note that the following shortcuts now become virtually useless
+
+;; kill line backwards (inverse of C-k, with s-backspace)
+(global-set-key (kbd "s-<backspace>") (kbd "M-0 C-k"))
 
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
@@ -136,6 +136,13 @@
 
 ;; Change window (from Wind Move built-in library) : Cmd + arrow
 (windmove-default-keybindings 'super)
+
+;; Change buffer
+(global-set-key (kbd "C-<tab>") 'next-buffer)
+(global-set-key (kbd "C-S-<tab>") 'previous-buffer)
+
+;; Change frame
+(global-set-key (kbd "M-S-<tab>") 'other-frame)
 
 ;; Window resize : fn + ctrl + arrow
 (global-set-key (kbd "C-<prior>") 'enlarge-window)
@@ -186,12 +193,11 @@
 ;; Map C-z to undo (suspend-frame is now C-x -)
 (global-set-key (kbd "C-z") 'undo)
 
-;; Use smex by default on Emacs >= 24
-(when (>= emacs-major-version 24)
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  ;; This is your old M-x.
-  (global-set-key (kbd "C-c M-x") 'execute-extended-command))
+;; Use smex by default
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c M-x") 'execute-extended-command)
 
 ;; use count-words instead of count-words-region as it works on buffer
 ;; if no region is selected
@@ -203,9 +209,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (show-paren-mode 1)
-(when (>= emacs-major-version 24)
-  (electric-pair-mode 1))
-
+(electric-pair-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SCROLLING CUSTOMIZATION
@@ -259,8 +263,7 @@
 					".cls" ".sty" ".pdf" ".log" ".toc"
 					".DS_Store" ".mp3" ".mp4" ".mkv"
 					"e.el"))
-  (setq ido-use-virtual-buffers t)
-					; keeps track of recently opened buffers
+  (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
   (require 'recentf)
   (recentf-mode 1)
   (setq recentf-max-saved-items 50
@@ -315,7 +318,7 @@
 ;;	  (lambda () (ispell-change-dictionary "en_US")))
 
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-;;(add-hook 'LaTeX-mode-hook 'turn-on-flyspell)
+(add-hook 'text-mode-hook 'flyspell-mode)
 
 ;; (setq ispell-local-dictionary "en_US")
 ;; (setq ispell-local-dictionary-alist
@@ -336,18 +339,15 @@
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (>= emacs-major-version 24)
-  (global-linum-mode t)
-  (setq linum-format "%3d")
-  ;; (setq linum-format "%4d \u2502")
-  ;;
-  ;; hlinum-mode extends linum-mode to highlight current line number.
-  ;; Available in MELPA
-  (require 'hlinum)
-  (hlinum-activate)
-  ;; (hlinum-deactivate) ;; to deactivate
-  )
+(global-linum-mode t)
+(setq linum-format "%3d")
+;; (setq linum-format "%4d \u2502")
 
+;; hlinum-mode extends linum-mode to highlight current line number.
+;; Available in MELPA
+(require 'hlinum)
+(hlinum-activate)
+;; (hlinum-deactivate) ;; to deactivate
 (global-hl-line-mode) ;; highlights current line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -392,42 +392,36 @@
 ;;;;    THEMES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Themes
-(when (>= emacs-major-version 24)
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
-  ;; (require 'powerline) ;; already added
-  ;; (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham
-  ;; waher, warm-night, zerodark.
-  ;; (set-cursor-color 'Orange) ;; see "cursor". Improves misterioso
-  ;; moe theme :
-  (require 'moe-theme)
-  ;; (moe-dark) ;; moe-dark or moe-light
-  ;; (moe-theme-set-color 'orange) ;; default : blue
-  ;; (require 'moe-theme-switcher) ;; day: light theme, night: dark theme
-  (defun night-moe-theme ()
-    (interactive)
-    (moe-dark)
-    (moe-theme-set-color 'blue))
 
-  (defun day-moe-theme ()
-    (interactive)
-    (moe-light)
-    (moe-theme-set-color 'orange))
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
+;; (require 'powerline) ;; already added
+;; (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham, waher, warm-night, zerodark.
+;; (set-cursor-color 'Orange) ;; see "cursor". Improves misterioso
+(require 'moe-theme)
+;; (moe-dark) ;; moe-dark or moe-light
+;; (moe-theme-set-color 'orange) ;; default : blue
+;; (require 'moe-theme-switcher) ;; day: light theme, night: dark theme
+(defun night-moe-theme ()
+  (interactive)
+  (moe-dark)
+  (moe-theme-set-color 'blue))
 
-  ;;  (defun switch-moe-theme ()  
-  ;;    (let ((now (string-to-number (format-time-string "%H"))))
-  ;;  ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
-  ;;      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
-  ;;      (day-moe-theme)
-  ;;     (night-moe-theme))
-  ;;      nil))      
-  ;; 
-  ;; (switch-moe-theme)  
-  (day-moe-theme)
-  )
+(defun day-moe-theme ()
+  (interactive)
+  (moe-light)
+  (moe-theme-set-color 'orange))
 
-
+;;  (defun switch-moe-theme ()  
+;;    (let ((now (string-to-number (format-time-string "%H"))))
+;;  ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
+;;      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
+;;      (day-moe-theme)
+;;     (night-moe-theme))
+;;      nil))      
+;; 
+;; (switch-moe-theme)  
+(day-moe-theme)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -480,10 +474,25 @@
 (setq-default TeX-master nil)
 (setq TeX-save-query nil) ;; autosave before compiling
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;; (add-hook 'LaTeX-mode-hook 'flyspell-mode) ;; done in "SPELL CHECKING"
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+
+;; automatically pair dollars
+(add-hook 'LaTeX-mode-hook
+	  '(lambda ()
+	     (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
+
+;; automatically pair
+;; (defvar latex-electric-pairs '(
+;; 			       (?\\\{ . ?\\\})
+;;     			       (?\\\[ . ?\\\])
+;; 			       ) "Electric pairs for LaTeX.")
+;; (defun latex-add-electric-pairs ()
+;;   (setq-local electric-pair-pairs (append electric-pair-pairs latex-electric-pairs))
+;;   (setq-local electric-pair-text-pairs electric-pair-pairs))
+;; (add-hook 'LaTeX-mode-hook 'latex-add-electric-pairs)
 
 ;; Add backends provided by company-auctex to company-backends
 (require 'company-auctex)
@@ -515,6 +524,43 @@
 ;; Utiliser C-c = pour utiliser reftex et naviguer rapidement dans le
 ;; document (utiliser TAB ou ENTER sur une section pour s'y rendre).
 ;; Dans Skim, utiliser Cmd+Shift+Click pour aller à la partie correspondante.
+
+
+;; RefTeX : add environment
+(setq reftex-label-alist
+      '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme"))
+      	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème") -3)
+      	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
+      	("proposition" ?p "prop:" "~\\ref{%s}" nil ("proposition"))
+      	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
+	))
+
+;; automatically add label when environment is created
+(add-hook 'LaTeX-mode-hook
+	  (lambda ()
+	    (LaTeX-add-environments
+	     '("lemma" LaTeX-env-label)
+	     '("theorem" LaTeX-env-label)
+	     '("corollary" LaTeX-env-label)
+	     '("proposition" LaTeX-env-label)
+	     '("definition" LaTeX-env-label)
+	     )))
+
+(eval-after-load "tex-ispell"
+  '(progn
+     (TeX-ispell-skip-setcar
+      '(("\\\\jao" ispell-tex-arg-end)
+	("\\\\citet" ispell-tex-arg-end)
+	("\\\\citep" ispell-tex-arg-end)
+	("\\\\eqref" ispell-tex-arg-end)
+	))
+     ;;(TeX-ispell-skip-setcdr
+     ;; ’(
+     ;; ("list" ispell-tex-arg-end 2)
+     ;; ("" . "\\\\end{myverbatim}")
+     ;; ))
+     ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SHELL
@@ -568,6 +614,24 @@
 ;; (global-auto-complete-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    YASNIPPET
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;(setq yas-snippet-dirs '("~/emacs.d/snippets/"))
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already
+(eval-after-load 'yasnippet
+  '(progn          
+     (define-key yas-keymap (kbd "C-o") 'yas-expand)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    WEB
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (require 'company) 
+(require 'company-web-html)  ; load company mode html backend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    MERLIN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -612,7 +676,7 @@
     ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
  '(package-selected-packages
    (quote
-    (tuareg company-auctex markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds))))
+    (yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
