@@ -606,7 +606,7 @@
   (setq company-idle-delay 0)
   ;; (add-hook 'after-init-hook 'company-statistics-mode)
   ;; uses stats for better auto-completion suggestions
-  ;; (setq company-minimum-prefix-length 2) ;; starts autocomplettion sooner
+  (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
   (add-hook 'after-init-hook 'company-statistics-mode)
   )
 
