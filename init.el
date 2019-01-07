@@ -260,7 +260,7 @@
   (setq ido-ignore-extensions t)
   (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
 					".blg" ".fdb_latexmk" ".fls" ".gz"
-					".cls" ".sty" ".pdf" ".log" ".toc"
+					".cls" ".sty" ".log" ".pdf" ".toc"
 					".DS_Store" ".mp3" ".mp4" ".mkv"
 					"e.el"))
   (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
@@ -273,7 +273,9 @@
 		  "~/.emacs.d/elpa/" "~/.emacs.d/url/"
 		  "company-statistics-cache.el"
 		  "[:ascii:]*loads.el"
-		  "[:ascii:]*.log")
+		  "\\.log$"
+		  "\\.aux$"
+		  )
 		)
 	)
   (setq ido-max-work-file-list 20)
@@ -320,7 +322,8 @@
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'text-mode-hook 'flyspell-mode)
 
-;; (setq ispell-local-dictionary "en_US")
+(setq ispell-local-dictionary "en_US") ;; english dictionary by default
+;; (setq ispell-local-dictionary "fr")
 ;; (setq ispell-local-dictionary-alist
 ;; Please note the list `("-d" "en_US")` contains ACTUAL parameters passed to hunspell
 ;; You could use `("-d" "en_US,en_US-med")` to check with multiple dictionaries
@@ -525,7 +528,6 @@
 ;; document (utiliser TAB ou ENTER sur une section pour s'y rendre).
 ;; Dans Skim, utiliser Cmd+Shift+Click pour aller à la partie correspondante.
 
-
 ;; RefTeX : add environment
 (setq reftex-label-alist
       '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme"))
@@ -560,6 +562,20 @@
      ;; ("" . "\\\\end{myverbatim}")
      ;; ))
      ))
+
+;; folding sections
+
+;; (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
+
+;; (eval-after-load 'outline
+;;'(progn
+;;   (require 'outline-magic)
+;;   (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)))
+
+;;(setq TeX-outline-extra
+;;      ;; other TeX outline levels
+;;      '(("[ \t]*\\\\\\(bib\\)?item\\b" 7)
+;;	("\\\\bibliography\\b" 2)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -622,6 +638,15 @@
 (eval-after-load 'yasnippet
   '(progn          
      (define-key yas-keymap (kbd "C-o") 'yas-expand)))
+
+;; MARKDOWN
+
+;; (setq markdown-coding-system "utf-8")
+(setq markdown-xhtml-header-content
+      (concat "<script type=\"text/javascript\" async"
+              " src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/"
+              "2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\">"
+              "</script>"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
