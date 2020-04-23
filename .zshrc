@@ -3,6 +3,7 @@
 
 # aliases
 alias emacs='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
+alias nb='jupyter notebook'
 
 export EDITOR='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
 export VISUAL='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
