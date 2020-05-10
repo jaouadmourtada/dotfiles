@@ -72,8 +72,8 @@
 ;; (load "xyz") ;; best not to include the ending “.el” or “.elc”
 
 ;; with autoloads (lazy loading; unsure if works)
-(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
-(autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
+;;; (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+;;; (autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
 ;;(autoload 'tuareg_indent "tuareg_indent" t)
 ;;(autoload 'tuareg-site-file "tuareg-site-file" t)
 
@@ -266,7 +266,7 @@
   (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
   (require 'recentf)
   (recentf-mode 1)
-  (setq recentf-max-saved-items 50
+  (setq recentf-max-saved-items 80
 	recentf-exclude 
 	(append recentf-exclude
 		'("~/.emacs.d/el-get/" "~$" "Library/" 
@@ -275,6 +275,7 @@
 		  "[:ascii:]*loads.el"
 		  "\\.log$"
 		  "\\.aux$"
+		  "\\.toc$"
 		  )
 		)
 	)
@@ -292,6 +293,17 @@
 ;;;;    SPELL CHECKING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq ispell-local-dictionary-alist
+      ;; Please note the list `("-d" "en_US")` contains ACTUAL parameters passed to hunspell
+      ;; You could use `("-d" "en_US,en_US-med")` to check with multiple dictionaries
+      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
+	("fr" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "fr") nil utf-8)
+	)
+      )
+(setq ispell-local-dictionary "en_US")
+(setq ispell-program-name "/usr/local/bin/aspell")
+(setq ispell-extra-args '("--sug-mode=fast" "--lang=en_US"))
+
 
 ;; Emacs 24.4 considerably improves support for Hunspell, and is now
 ;; able to use Hunspell automatically with only little further
@@ -299,7 +311,12 @@
 ;; dictionaries, and fills ispell-dictionary-alist
 ;; automatically. Essentially, you just need the following to tell
 ;; Emacs to use hunspell:
-					; (setq ispell-program-name (executable-find "hunspell"))
+;; (setq ispell-program-name (executable-find "hunspell"))
+
+;; ;; Path of dictionaries (?)
+;; (setenv "DICPATH" (concat (getenv "HOME") "/Library/Spelling"))
+;; ;; (setenv "DICPATH" "~/Library/Spelling")
+
 ;; Besides language-specific dictioniaries, you also need to have a
 ;; “default” dictionary for Emacs. This dictionary needs to be named
 ;; default, literally. Creating it is easy enough, though. Just create
@@ -309,16 +326,18 @@
 ;; $ ln -s en_GB.aff default.aff
 ;; $ ln -s en_GB.dic default.dic
 
-
-;;(setenv "DICTIONARY" "fr")
-;;(setenv "DICTIONARY" "en_US")
-
 ;;(add-hook 'TeX-language-fr-hook
 ;;	  (lambda () (ispell-change-dictionary "fr")))
 
 ;;(add-hook 'TeX-language-en-hook
 ;;	  (lambda () (ispell-change-dictionary "en_US")))
 
+;; new code / ad-hoc
+;; (setenv "DICPATH" (concat (getenv "HOME") "~/Library/Spelling"))
+;; Tell ispell-mode to use hunspell.
+;; (setq ispell-program-name "/usr/local/bin/hunspell")
+
+;; Activate flyspell
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'text-mode-hook 'flyspell-mode)
 
@@ -552,6 +571,7 @@
   '(progn
      (TeX-ispell-skip-setcar
       '(("\\\\jao" ispell-tex-arg-end)
+	("\\\\ste" ispell-tex-arg-end)
 	("\\\\citet" ispell-tex-arg-end)
 	("\\\\citep" ispell-tex-arg-end)
 	("\\\\eqref" ispell-tex-arg-end)
