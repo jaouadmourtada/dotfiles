@@ -341,7 +341,7 @@
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'text-mode-hook 'flyspell-mode)
 
-(setq ispell-local-dictionary "en_US") ;; english dictionary by default
+;; (setq ispell-local-dictionary "en_US") ;; english dictionary by default
 ;; (setq ispell-local-dictionary "fr")
 ;; (setq ispell-local-dictionary-alist
 ;; Please note the list `("-d" "en_US")` contains ACTUAL parameters passed to hunspell
@@ -585,12 +585,12 @@
 
 ;; folding sections
 
-;; (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
+(add-hook 'LaTeX-mode-hook 'outline-minor-mode)
 
-;; (eval-after-load 'outline
-;;'(progn
-;;   (require 'outline-magic)
-;;   (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)))
+(eval-after-load 'outline
+  '(progn
+     (require 'outline-magic)
+     (define-key outline-minor-mode-map (kbd "<M-tab>") 'outline-cycle)))
 
 ;;(setq TeX-outline-extra
 ;;      ;; other TeX outline levels
@@ -721,7 +721,10 @@
     ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
  '(package-selected-packages
    (quote
-    (yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds))))
+    (outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell
+		   ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum
+		   company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic
+		   ido-completing-read+))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
