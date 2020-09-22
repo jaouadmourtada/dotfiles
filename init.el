@@ -138,11 +138,12 @@
 (windmove-default-keybindings 'super)
 
 ;; Change buffer
-(global-set-key (kbd "C-<tab>") 'next-buffer)
-(global-set-key (kbd "C-S-<tab>") 'previous-buffer)
+(global-set-key (kbd "C-M-<tab>") 'next-buffer)
+(global-set-key (kbd "C-M-S-<tab>") 'previous-buffer)
 
 ;; Change frame
-(global-set-key (kbd "M-S-<tab>") 'other-frame)
+(global-set-key (kbd "M-s-<right>") 'other-frame)
+(global-set-key (kbd "M-s-<left>") 'other-frame)
 
 ;; Window resize : fn + ctrl + arrow
 (global-set-key (kbd "C-<prior>") 'enlarge-window)
@@ -424,15 +425,28 @@
 ;; (moe-dark) ;; moe-dark or moe-light
 ;; (moe-theme-set-color 'orange) ;; default : blue
 ;; (require 'moe-theme-switcher) ;; day: light theme, night: dark theme
+
+;; after moe-theme update: replace set-color by apply-color
 (defun night-moe-theme ()
   (interactive)
   (moe-dark)
-  (moe-theme-set-color 'blue))
+  ;;(moe-theme-set-color 'blue)
+  (moe-theme-apply-color 'blue)
+  )
 
+;; after moe-theme update: replace set-color by apply-color
 (defun day-moe-theme ()
   (interactive)
   (moe-light)
-  (moe-theme-set-color 'orange))
+  ;;(moe-theme-set-color 'orange)
+  (moe-theme-apply-color 'orange)  
+  )
+
+(moe-light)
+;;(moe-theme-set-color 'orange)
+(moe-theme-apply-color 'orange)
+;;(moe-theme-select-color 'orange) ;; interactive
+
 
 ;;  (defun switch-moe-theme ()  
 ;;    (let ((now (string-to-number (format-time-string "%H"))))
@@ -442,8 +456,9 @@
 ;;     (night-moe-theme))
 ;;      nil))      
 ;; 
-;; (switch-moe-theme)  
-(day-moe-theme)
+;; (switch-moe-theme)
+;;
+;;(day-moe-theme)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -454,6 +469,11 @@
 ;; (add-to-list 'default-frame-alist '(height . 33))
 (when window-system (set-frame-size (selected-frame) 83 36))
 
+;; zoom in/out: globally change text size
+(defadvice text-scale-increase (around all-buffers (arg) activate)
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      ad-do-it)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    BACKUP
@@ -590,7 +610,7 @@
 (eval-after-load 'outline
   '(progn
      (require 'outline-magic)
-     (define-key outline-minor-mode-map (kbd "<M-tab>") 'outline-cycle)))
+     (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)))
 
 ;;(setq TeX-outline-extra
 ;;      ;; other TeX outline levels
@@ -721,10 +741,7 @@
     ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
  '(package-selected-packages
    (quote
-    (outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell
-		   ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum
-		   company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic
-		   ido-completing-read+))))
+    (magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
