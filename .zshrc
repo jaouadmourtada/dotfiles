@@ -4,6 +4,8 @@
 # aliases
 alias emacs='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
 alias nb='jupyter notebook'
+alias jemdoc='python2 jemdoc.py'
+alias jd='cd ~/github/site-jemdoc/ && jemdoc *.jemdoc'
 
 export EDITOR='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
 export VISUAL='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
