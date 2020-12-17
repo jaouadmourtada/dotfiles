@@ -458,6 +458,7 @@
 ;; 
 ;; (switch-moe-theme)
 ;;
+;; stopped working
 ;;(day-moe-theme)
 
 
@@ -499,6 +500,11 @@
 
 (add-hook 'org-mode-hook (lambda () (set-input-method "TeX")))
 (global-set-key (kbd "C-c a") 'org-agenda)
+
+;; turn off linum mode in org mode
+(defun turn-off-linum-mode ()
+  (linum-mode -1))
+(add-hook 'org-mode-hook 'turn-off-linum-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
