@@ -27,6 +27,7 @@
 ;;;;    PYTHON
 ;;;;    AUTOCOMPLETE
 ;;;;    YASNIPPET
+;;;;    MARKDOWN
 ;;;;    MERLIN
 ;;;;    CUSTOM
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61,7 +62,8 @@
  'package-archives
  '("melpa" . "http://melpa.org/packages/")
  t)
-(package-initialize)
+;; (package-initialize) ; de-activated since emacs 27:
+;; Warning (package): Unnecessary call to ‘package-initialize’ in init file
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -685,7 +687,9 @@
   '(progn          
      (define-key yas-keymap (kbd "C-o") 'yas-expand)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MARKDOWN
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (setq markdown-coding-system "utf-8")
 (setq markdown-xhtml-header-content
@@ -694,6 +698,11 @@
               "2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\">"
               "</script>"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JEMDOC
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; use jemdoc-mode
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    WEB
@@ -744,7 +753,7 @@
  '(markdown-command "/usr/local/bin/pandoc")
  '(org-agenda-files
    (quote
-    ("~/Dropbox/these/todo-these.org" "~/Dropbox/Perso/todo-new.org" "~/Dropbox/stage/todo-stage.org")))
+    ("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org")))
  '(package-selected-packages
    (quote
     (magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))))
