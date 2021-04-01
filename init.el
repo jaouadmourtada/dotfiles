@@ -238,54 +238,52 @@
 ;;;;    IDO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (>= emacs-major-version 24)
-  (require 'ido-vertical-mode)
-  (ido-mode 1)
-  (ido-vertical-mode 1)
-  (setq ido-everywhere t)
-  (require 'ido-completing-read+)
-  (ido-ubiquitous-mode 1)
-  (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
-  ;;  (setq ido-enable-flex-matching t)		; unneeded ?  
-  (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
-				    ".ml" ".sh"))
-  (setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
-				 "Applications" "Calibre Library/"
-				 "Library/" "Mail/" "Movies/"
-				 "Music/" "News/" "Pictures/"
-				 "Public/" "Sites/"))
-  (defun ido-ignore-non-user-except (name)
-    "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
-    (and (string-match "^\*" name)
-	 (not (string= name "*scratch*"))
-	 (not (string= name "*GNU Emacs*"))))
-  (setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
-  (setq ido-ignore-extensions t)
-  (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
-					".blg" ".fdb_latexmk" ".fls" ".gz"
-					".cls" ".sty" ".log" ".pdf" ".toc"
-					".DS_Store" ".mp3" ".mp4" ".mkv"
-					"e.el"))
-  (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
-  (require 'recentf)
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 80
-	recentf-exclude 
-	(append recentf-exclude
-		'("~/.emacs.d/el-get/" "~$" "Library/" 
-		  "~/.emacs.d/elpa/" "~/.emacs.d/url/"
-		  "company-statistics-cache.el"
-		  "[:ascii:]*loads.el"
-		  "\\.log$"
-		  "\\.aux$"
-		  "\\.toc$"
-		  )
+(require 'ido-vertical-mode)
+(ido-mode 1)
+(ido-vertical-mode 1)
+(setq ido-everywhere t)
+(require 'ido-completing-read+)
+(ido-ubiquitous-mode 1)
+(setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
+;;  (setq ido-enable-flex-matching t)		; unneeded ?  
+(setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
+				  ".ml" ".sh"))
+(setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
+			       "Applications" "Calibre Library/"
+			       "Library/" "Mail/" "Movies/"
+			       "Music/" "News/" "Pictures/"
+			       "Public/" "Sites/"))
+(defun ido-ignore-non-user-except (name)
+  "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
+  (and (string-match "^\*" name)
+       (not (string= name "*scratch*"))
+       (not (string= name "*GNU Emacs*"))))
+(setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
+(setq ido-ignore-extensions t)
+(setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
+				      ".blg" ".fdb_latexmk" ".fls" ".gz"
+				      ".cls" ".sty" ".log" ".pdf" ".toc"
+				      ".DS_Store" ".mp3" ".mp4" ".mkv"
+				      "e.el"))
+(setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-saved-items 80
+      recentf-exclude 
+      (append recentf-exclude
+	      '("~/.emacs.d/el-get/" "~$" "Library/" 
+		"~/.emacs.d/elpa/" "~/.emacs.d/url/"
+		"company-statistics-cache.el"
+		"[:ascii:]*loads.el"
+		"\\.log$"
+		"\\.aux$"
+		"\\.toc$"
 		)
-	)
-  (setq ido-max-work-file-list 20)
-  ;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
-  ;; requires that package ido-sort-mtime is installed
-  )
+	      )
+      )
+(setq ido-max-work-file-list 20)
+;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
+;; requires that package ido-sort-mtime is installed
 
 ;; C-x C-f now uses ido-find-file.
 ;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
@@ -409,7 +407,7 @@
 ;;;;    POWERLINE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (and (>= emacs-major-version 24) window-system)
+(when window-system
   (require 'powerline)
   (powerline-default-theme))
 
@@ -664,15 +662,13 @@
 
 ;; Alternative : either auto-complete-mode, or company-mode
 
-(when (>= emacs-major-version 24)
-  (autoload 'company-mode "company" nil t)
-  (global-company-mode t)
-  (setq company-idle-delay 0)
-  ;; (add-hook 'after-init-hook 'company-statistics-mode)
-  ;; uses stats for better auto-completion suggestions
-  (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
-  (add-hook 'after-init-hook 'company-statistics-mode)
-  )
+(autoload 'company-mode "company" nil t)
+(global-company-mode t)
+(setq company-idle-delay 0)
+;; (add-hook 'after-init-hook 'company-statistics-mode)
+;; uses stats for better auto-completion suggestions
+(setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
+(add-hook 'after-init-hook 'company-statistics-mode)
 
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -750,13 +746,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("00445e6f15d31e9afaa23ed0d765850e9cd5e929be5e8e63b114a3346236c44c" "c433c87bd4b64b8ba9890e8ed64597ea0f8eb0396f4c9a9e01bd20a04d15d358" "0feb7052df6cfc1733c1087d3876c26c66410e5f1337b039be44cb406b6187c6" default))
  '(markdown-command "/usr/local/bin/pandoc")
  '(org-agenda-files
-   (quote
-    ("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org")))
+   '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   (quote
-    (magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))))
+   '(solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+)))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
