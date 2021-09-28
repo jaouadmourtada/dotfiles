@@ -448,19 +448,6 @@
 ;;(moe-theme-select-color 'orange) ;; interactive
 
 
-;;  (defun switch-moe-theme ()  
-;;    (let ((now (string-to-number (format-time-string "%H"))))
-;;  ;;      (if (and (>= now 07) (<= now 18)) ;; day between 7am and 7pm
-;;      (if (and (>= now 07) (<= now 23)) ;; day between 7am and 11pm
-;;      (day-moe-theme)
-;;     (night-moe-theme))
-;;      nil))      
-;; 
-;; (switch-moe-theme)
-;;
-;; stopped working
-;;(day-moe-theme)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
@@ -506,6 +493,16 @@
   (linum-mode -1))
 (add-hook 'org-mode-hook 'turn-off-linum-mode)
 
+;; C-up and down to navigate
+(with-eval-after-load "org"
+  (define-key org-mode-map (kbd "C-<up>") 'org-previous-visible-heading)
+  (define-key org-mode-map (kbd "C-<down>") 'org-next-visible-heading)
+  ;; Add other org commands
+  )
+
+;; open files folded by default
+(setq org-startup-folded t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    AUCTEX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -517,7 +514,10 @@
 ;; Other AucTeX configuration
 ;; see http://www.stefanom.org/setting-up-a-nice-auctex-environment-on-mac-os-x/
 
-;; (setq TeX-auto-save t)
+;; (setq TeX-auto-save t) ;; creates 'auto' subdirectory to
+;; keep information about macros for multifile projects.
+;; Can be enabled on a per-file basis by adding
+;; %%% TeX-auto-save: t
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
 (setq TeX-save-query nil) ;; autosave before compiling
@@ -578,8 +578,10 @@
       '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme"))
       	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème") -3)
       	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
-      	("proposition" ?p "prop:" "~\\ref{%s}" nil ("proposition"))
+      	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition"))
       	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
+	("remark" ?r "rem:" "~\\ref{%s}" nil ("remark" "remarque"))
+	("example" ?x "ex:" "~\\ref{%s}" nil ("example" "exemple"))	
 	))
 
 ;; automatically add label when environment is created
@@ -622,6 +624,23 @@
 ;;      ;; other TeX outline levels
 ;;      '(("[ \t]*\\\\\\(bib\\)?item\\b" 7)
 ;;	("\\\\bibliography\\b" 2)))
+
+;; Insert new entry to the cv bibliography
+(defun cvpub ()
+  "Add a new publication."
+  (interactive) ;; function is a command, can be called by M-x
+  (insert "\n% ================\n\\cvpub%\n"
+	  "[" (read-string "STATUS: preprint | major | minor | accepted | published: [preprint] " nil nil "preprint") "]% status\n"
+	  ;; ido-completing-read?
+	  "{" (read-string "Year: [2021] " nil nil "2021") "}% year\n"
+	  "{" (read-string "Title: ") "}% title\n"
+	  "{" (read-string "Authors: [J. Mourtada] " nil nil "J. Mourtada") "}% authors\n"
+	  "{" (read-string "arXiv id: ") "}% arXiv id\n"
+	  "{" (read-string "Venue [empty unless revision]: ") "}% venue\n"
+	  "{" (read-string "Volume(number):pages [empty unless published]: ") "}% volume(number):pages\n"
+	  "{" (read-string "Link [empty unless published]:") "}% URL link\n"
+	  )
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -752,7 +771,8 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+)))
+   '(solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
+ '(safe-local-variable-values '((TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
