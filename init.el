@@ -448,7 +448,6 @@
 ;;(moe-theme-select-color 'orange) ;; interactive
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -581,7 +580,8 @@
       	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition"))
       	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
 	("remark" ?r "rem:" "~\\ref{%s}" nil ("remark" "remarque"))
-	("example" ?x "ex:" "~\\ref{%s}" nil ("example" "exemple"))	
+	("example" ?x "ex:" "~\\ref{%s}" nil ("example" "exemple"))
+	("assumption" ?a "ass:"  "~\\ref{%s}" nil ("assumption"))
 	))
 
 ;; automatically add label when environment is created
@@ -599,7 +599,6 @@
   '(progn
      (TeX-ispell-skip-setcar
       '(("\\\\jao" ispell-tex-arg-end)
-	("\\\\ste" ispell-tex-arg-end)
 	("\\\\citet" ispell-tex-arg-end)
 	("\\\\citep" ispell-tex-arg-end)
 	("\\\\eqref" ispell-tex-arg-end)
@@ -611,14 +610,22 @@
      ;; ))
      ))
 
-;; folding sections
+;; folding sections and navigation
 
 (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
 
 (eval-after-load 'outline
   '(progn
      (require 'outline-magic)
-     (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)))
+     (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)
+     (define-key outline-minor-mode-map (kbd "C-c C-u") 'outline-up-heading)
+     (define-key outline-minor-mode-map (kbd "C-c C-n") 'outline-next-visible-heading)
+     (define-key outline-minor-mode-map (kbd "C-c C-p") 'outline-previous-visible-heading)
+     (define-key outline-minor-mode-map (kbd "C-c <C-down>") 'outline-next-heading)
+     (define-key outline-minor-mode-map (kbd "C-c <C-up>") 'outline-up-heading)
+     (define-key outline-minor-mode-map (kbd "C-c <C-right>") 'outline-forward-same-level)
+     (define-key outline-minor-mode-map (kbd "C-c <C-left>") 'outline-backward-same-level)
+     ))
 
 ;;(setq TeX-outline-extra
 ;;      ;; other TeX outline levels
@@ -766,13 +773,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("00445e6f15d31e9afaa23ed0d765850e9cd5e929be5e8e63b114a3346236c44c" "c433c87bd4b64b8ba9890e8ed64597ea0f8eb0396f4c9a9e01bd20a04d15d358" "0feb7052df6cfc1733c1087d3876c26c66410e5f1337b039be44cb406b6187c6" default))
+   '("4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "a53f00556ab4c81a0618ab6589053d9e351312d37d9c9cf544e0c8edac2b63ab" "00445e6f15d31e9afaa23ed0d765850e9cd5e929be5e8e63b114a3346236c44c" "c433c87bd4b64b8ba9890e8ed64597ea0f8eb0396f4c9a9e01bd20a04d15d358" "0feb7052df6cfc1733c1087d3876c26c66410e5f1337b039be44cb406b6187c6" default))
  '(markdown-command "/usr/local/bin/pandoc")
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s powerline smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
- '(safe-local-variable-values '((TeX-auto-save . t))))
+   '(with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
+ '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
