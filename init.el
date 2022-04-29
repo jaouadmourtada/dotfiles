@@ -23,6 +23,7 @@
 ;;;;    BACKUP
 ;;;;    ORG
 ;;;;    AUCTEX
+;;;;    IMENU
 ;;;;    SHELL
 ;;;;    PYTHON
 ;;;;    AUTOCOMPLETE
@@ -213,6 +214,12 @@
 
 (show-paren-mode 1)
 (electric-pair-mode 1)
+
+;; helps match braces '\{ \}'
+;; "After evaluation of this form, \ acts as a punctuation character rather than an escape character", see https://tex.stackexchange.com/questions/74100/matching-the-delimiters-and-in-auctex
+;; ! may lead to unexpected side effects
+;; ideally, one should still treat '\' as an escape character, except when followed by {}
+;; (add-hook 'TeX-mode-hook (lambda () (modify-syntax-entry ?\\ ".")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    SCROLLING CUSTOMIZATION
@@ -648,6 +655,13 @@
 	  "{" (read-string "Link [empty unless published]:") "}% URL link\n"
 	  )
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    IMENU
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; code navigation
+(global-set-key (kbd "C-c i") 'imenu)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
