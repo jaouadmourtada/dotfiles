@@ -21,6 +21,7 @@
 ;;;;    THEMES
 ;;;;    FRAME SIZE
 ;;;;    BACKUP
+;;;;    AUTO-REVERT
 ;;;;    ORG
 ;;;;    AUCTEX
 ;;;;    IMENU
@@ -486,6 +487,14 @@
       ;; backup-by-copying t  ;; Copy all files, don't rename them.
       delete-by-moving-to-trash t
       )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    AUTO-REVERT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Refresh buffers when the underlying file has changed
+;; useful when using git or Bibdesk
+(global-auto-revert-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    ORG
