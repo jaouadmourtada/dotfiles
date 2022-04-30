@@ -365,6 +365,9 @@
 ;; (setq-default cursor-type 'bar) ;; bar, box, hbar, hollow, nil
 ;; (set-cursor-color 'Orange) ;; see "theme"
 
+;; Remember and restore the last cursor location of opened files
+(save-place-mode 1)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
