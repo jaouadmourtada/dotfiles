@@ -157,7 +157,6 @@
 
 (global-set-key (kbd "C-s-=") 'balance-windows)
 
-
 ;;;; Frames movements
 ;;(load "frame-fns")
 ;;(load "frame-cmds")
@@ -191,9 +190,15 @@
 (global-set-key (kbd "C-x _") 'toggle-frame-fullscreen) ;; same as M-f11
 (global-set-key (kbd "<M-f11>") 'toggle-frame-fullscreen)
 
-;; Zoom in/out
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
+;;; Zoom in/out
+;; default-text-scale mode: change text scale globally (add 1 size)
+(global-set-key (kbd "C-+") 'default-text-scale-increase)
+(global-set-key (kbd "C--") 'default-text-scale-decrease)
+(global-set-key (kbd "C-=") 'default-text-scale-reset)
+;; text-scale-increase is buffer-specific rather than global (less useful)
+(setq text-scale-mode-step 1.07) ; scale size by 1.07 instead of 1.2 factor
+(global-set-key (kbd "C-x C-+") 'text-scale-increase)
+(global-set-key (kbd "C-x C--") 'text-scale-decrease)
 
 ;; Map C-z to undo (suspend-frame is now C-x -)
 (global-set-key (kbd "C-z") 'undo)
