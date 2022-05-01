@@ -313,6 +313,16 @@
 (setq ispell-program-name "/usr/local/bin/aspell")
 (setq ispell-extra-args '("--sug-mode=fast" "--lang=en_US"))
 
+;; short commands to change dictionaries
+(defun english ()
+  (interactive)
+  (ispell-change-dictionary "en_US")
+  )
+
+(defun french ()
+  (interactive)
+  (ispell-change-dictionary "fr")
+  )
 
 ;; Emacs 24.4 considerably improves support for Hunspell, and is now
 ;; able to use Hunspell automatically with only little further
