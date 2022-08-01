@@ -117,6 +117,8 @@
 ;; kill line backwards (inverse of C-k, with s-backspace)
 (global-set-key (kbd "s-<backspace>") (kbd "M-0 C-k"))
 
+(global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
+
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
 (global-set-key (kbd "M-n") "~")
@@ -190,15 +192,15 @@
 (global-set-key (kbd "C-x _") 'toggle-frame-fullscreen) ;; same as M-f11
 (global-set-key (kbd "<M-f11>") 'toggle-frame-fullscreen)
 
-;;; Zoom in/out
+;;; Zoom in/out (text scale)
 ;; default-text-scale mode: change text scale globally (add 1 size)
 (global-set-key (kbd "C-+") 'default-text-scale-increase)
 (global-set-key (kbd "C--") 'default-text-scale-decrease)
 (global-set-key (kbd "C-=") 'default-text-scale-reset)
-;; text-scale-increase is buffer-specific rather than global (less useful)
-(setq text-scale-mode-step 1.07) ; scale size by 1.07 instead of 1.2 factor
-(global-set-key (kbd "C-x C-+") 'text-scale-increase)
-(global-set-key (kbd "C-x C--") 'text-scale-decrease)
+;; text-scale-increase below is buffer-specific rather than global/default (less useful/deprecated)
+;; (setq text-scale-mode-step 1.07) ; scale size by 1.07 instead of 1.2 factor
+;; (global-set-key (kbd "C-x C-+") 'text-scale-increase)
+;; (global-set-key (kbd "C-x C--") 'text-scale-decrease)
 
 ;; Map C-z to undo (suspend-frame is now C-x -)
 (global-set-key (kbd "C-z") 'undo)
@@ -276,8 +278,11 @@
 (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
 				      ".blg" ".fdb_latexmk" ".fls" ".gz"
 				      ".cls" ".sty" ".log" ".pdf" ".toc"
-				      ".DS_Store" ".mp3" ".mp4" ".mkv"
-				      "e.el"))
+				      ".snm" ".nav" ".maf" ".html"
+				      ".djvu" ".docx" ".xls" ".webloc" ".gcx"
+				      ".png" ".jpg" ".jpeg" ".webp" ".gif"
+				      ".DS_Store" ".mp3" ".mp4" ".mkv" ".PNG"
+				      "e.el" ".localized" ".zip"))
 (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
 (require 'recentf)
 (recentf-mode 1)
