@@ -393,9 +393,15 @@
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-linum-mode t)
-(setq linum-format "%3d")
-;; (setq linum-format "%4d \u2502")
+;; linum-mode leads to a bug in Company where the cursor jumps accross the screen
+;; It also leads to performance issues when used with folding
+;; As a result, it is probably best turned off
+;; (global-linum-mode t)
+;; (setq linum-format "%3d")
+;; ;; (setq linum-format "%4d \u2502")
+
+;; A better alternative is display-line-numbers-mode, which does not have these issues, although it takes up more space
+;; (global-display-line-numbers-mode)
 
 ;; hlinum-mode extends linum-mode to highlight current line number.
 ;; Available in MELPA
@@ -527,9 +533,10 @@
 (global-set-key (kbd "C-c a") 'org-agenda)
 
 ;; turn off linum mode in org mode
-(defun turn-off-linum-mode ()
-  (linum-mode -1))
-(add-hook 'org-mode-hook 'turn-off-linum-mode)
+;; no longer needed as linum-mode is now turned off by default
+;; (defun turn-off-linum-mode ()
+;;   (linum-mode -1))
+;; (add-hook 'org-mode-hook 'turn-off-linum-mode)
 
 ;; C-up and down to navigate
 (with-eval-after-load "org"
@@ -824,7 +831,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
+   '(company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
