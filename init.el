@@ -77,15 +77,10 @@
 
 ;; with autoloads (lazy loading; unsure if works)
 ;;; (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
-;;; (autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
-;;(autoload 'tuareg_indent "tuareg_indent" t)
-;;(autoload 'tuareg-site-file "tuareg-site-file" t)
 
 ;; without autoloads (works but slow)
 ;;(load "tuareg")
-;;(load "ocamldebug")
-;;(load "tuareg_indent")
-;;(load "tuareg-site-file")
+;; tuareg, ocamldebug, tuareg_indent, tuareg-site-file
 
 ;; aggressive-indent mode
 ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
@@ -400,6 +395,10 @@
 ;; (setq linum-format "%3d")
 ;; ;; (setq linum-format "%4d \u2502")
 
+;; more modern alternative: nlinum-mode; does not lead to the same bug
+(global-nlinum-mode t)
+;; (setq nlinum-format "%3d")
+
 ;; A better alternative is display-line-numbers-mode, which does not have these issues, although it takes up more space
 ;; (global-display-line-numbers-mode)
 
@@ -678,6 +677,9 @@
 ;;      '(("[ \t]*\\\\\\(bib\\)?item\\b" 7)
 ;;	("\\\\bibliography\\b" 2)))
 
+;; modify current environment
+;; C-u C-c C-e
+
 ;; Insert new entry to the cv bibliography
 (defun cvpub ()
   "Add a new publication."
@@ -744,10 +746,9 @@
 (autoload 'company-mode "company" nil t)
 (global-company-mode t)
 (setq company-idle-delay 0)
-;; (add-hook 'after-init-hook 'company-statistics-mode)
-;; uses stats for better auto-completion suggestions
 (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
 (add-hook 'after-init-hook 'company-statistics-mode)
+;; uses stats for better auto-completion suggestions
 
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -831,7 +832,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+))
+   '(nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
