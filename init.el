@@ -437,7 +437,7 @@
   "Switch the current buffer to a DejaVu Sans Mono font."
   (set-frame-font "DejaVu Sans Mono-14"))
 
-(add-hook 'tuareg-mode-hook 'use-djvumono)
+;; (add-hook 'tuareg-mode-hook 'use-djvumono)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    POWERLINE
@@ -571,6 +571,10 @@
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
 
+;; disable reference style menu
+;; "C-c )" directly works without extra RET step
+(setq reftex-ref-macro-prompt nil)
+
 ;; automatically pair dollars
 (add-hook 'LaTeX-mode-hook
 	  '(lambda ()
@@ -619,14 +623,14 @@
 
 ;; RefTeX : add environment
 (setq reftex-label-alist
-      '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme"))
-      	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème") -3)
+      '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme" "lemmas"))
+      	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème" "theorems") -3)
       	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
-      	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition"))
+      	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition" "propositions"))
       	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
 	("remark" ?r "rem:" "~\\ref{%s}" nil ("remark" "remarque"))
 	("example" ?x "ex:" "~\\ref{%s}" nil ("example" "exemple"))
-	("assumption" ?a "ass:"  "~\\ref{%s}" nil ("assumption"))
+	("assumption" ?a "ass:"  "~\\ref{%s}" nil ("assumption" "assumptions"))
 	))
 
 ;; automatically add label when environment is created
@@ -791,8 +795,8 @@
 ;;;;    MERLIN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Add opam emacs directory to the load-path
-(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
+;; Add opam emacs directory to your load-path by appending this to your .emacs:
+(let ((opam-share (ignore-errors (car (process-lines "opam" "var"
 						     "share")))))
   (when (and opam-share (file-directory-p opam-share))
     ;; Register Merlin
@@ -803,8 +807,10 @@
     (add-hook 'caml-mode-hook 'merlin-mode t)
     ;; Use opam switch to lookup ocamlmerlin binary
     (setq merlin-command 'opam)))
-;; Take a look at https://github.com/the-lambda-church/merlin for more
-;; information
+;; Take a look at https://github.com/ocaml/merlin for more information
+
+(require 'merlin-company)
+;; should be enough to get merlin to work within company
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CUSTOM 
@@ -832,7 +838,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+   '(merlin-company nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
