@@ -577,8 +577,8 @@
 
 ;; automatically pair dollars
 (add-hook 'LaTeX-mode-hook
-	  '(lambda ()
-	     (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
+	  #'(lambda ()
+	      (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
 
 ;; automatically pair
 ;; (defvar latex-electric-pairs '(
@@ -602,7 +602,7 @@
 			      '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
 				:help "Run latexmk on file")
 			      TeX-command-list)))
-(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+(add-hook 'TeX-mode-hook #'(lambda () (setq TeX-command-default "latexmk")))
 
 ;; use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
