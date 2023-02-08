@@ -114,6 +114,8 @@
 
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 
+(global-set-key (kbd "M-q") 'indent-region)
+
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
 (global-set-key (kbd "M-n") "~")
