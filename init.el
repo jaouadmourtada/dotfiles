@@ -45,7 +45,6 @@
 ;; get rid of the starting screen
 (setq inhibit-splash-screen t)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LOAD PATH
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,7 +52,6 @@
 ;; Tell emacs where your personal elisp library directory is :
 ;; (add-to-list 'load-path "~/.emacs.d/lisp/")
 ;; no longer necessary
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    ELPA, MELPA
@@ -67,6 +65,12 @@
 ;; (package-initialize) ; de-activated since emacs 27:
 ;; Warning (package): Unnecessary call to ‘package-initialize’ in init file
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    USE-PACKAGE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(eval-when-compile
+  (require 'use-package))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LOAD PACKAGES
@@ -116,13 +120,20 @@
 
 (global-set-key (kbd "M-q") 'indent-region)
 
+;; (defun unfill-paragraph ()
+;;   (interactive)
+;;   (let ((fill-column (point-max)))
+;;     (fill-paragraph nil)))
+;; (global-set-key (kbd "M-Q") 'unfill-paragraph)
+
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-L") "|")
 (global-set-key (kbd "M-n") "~")
 
-(global-set-key (kbd "ESC M-n") "~") ;; to type ~ in a minibuffer
-(global-set-key (kbd "ESC M-o") "œ")
-(global-set-key (kbd "ESC M-a") "æ")
+;; to type ~ in a minibuffer (not needed on macos)
+;; (global-set-key (kbd "ESC M-n") "~") 
+;; (global-set-key (kbd "ESC M-o") "œ")
+;; (global-set-key (kbd "ESC M-a") "æ")
 
 ;; (global-set-key (kbd "ESC M-' a") "á")
 ;; (global-set-key (kbd "ESC M-' i") "í")
@@ -202,12 +213,6 @@
 ;; Map C-z to undo (suspend-frame is now C-x -)
 (global-set-key (kbd "C-z") 'undo)
 
-;; Use smex by default
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c M-x") 'execute-extended-command)
-
 ;; use count-words instead of count-words-region as it works on buffer
 ;; if no region is selected
 (global-set-key (kbd "M-=") 'count-words)
@@ -245,42 +250,12 @@
 ;;(global-set-key (kbd "<wheel-right>") 'next-buffer)
 ;;(global-set-key (kbd "<wheel-left>") 'previous-buffer)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    IDO
+;;;;    RECENTF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'ido-vertical-mode)
-(ido-mode 1)
-(ido-vertical-mode 1)
-(setq ido-everywhere t)
-(require 'ido-completing-read+)
-(ido-ubiquitous-mode 1)
-(setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
-;;  (setq ido-enable-flex-matching t)		; unneeded ?  
-(setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
-				  ".ml" ".sh"))
-(setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
-			       "Applications" "Calibre Library/"
-			       "Library/" "Mail/" "Movies/"
-			       "Music/" "News/" "Pictures/"
-			       "Public/" "Sites/"))
-(defun ido-ignore-non-user-except (name)
-  "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
-  (and (string-match "^\*" name)
-       (not (string= name "*scratch*"))
-       (not (string= name "*GNU Emacs*"))))
-(setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
-(setq ido-ignore-extensions t)
-(setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
-				      ".blg" ".fdb_latexmk" ".fls" ".gz"
-				      ".cls" ".sty" ".log" ".pdf" ".toc"
-				      ".snm" ".nav" ".maf" ".html"
-				      ".djvu" ".docx" ".xls" ".webloc" ".gcx"
-				      ".png" ".jpg" ".jpeg" ".webp" ".gif"
-				      ".DS_Store" ".mp3" ".mp4" ".mkv" ".PNG"
-				      "e.el" ".localized" ".zip"))
-(setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
+;; Useful for completion
+
 (require 'recentf)
 (recentf-mode 1)
 (setq recentf-max-saved-items 80
@@ -293,16 +268,138 @@
 		"\\.log$"
 		"\\.aux$"
 		"\\.toc$"
-		)
+		"\\.sty$")
 	      )
       )
-(setq ido-max-work-file-list 20)
-;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
-;; requires that package ido-sort-mtime is installed
 
-;; C-x C-f now uses ido-find-file.
-;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
-;; Useful to create a new file.
+(setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
+				      ".blg" ".fdb_latexmk" ".fls" ".gz"
+				      ".cls" ".sty" ".log" ".pdf" ".toc"
+				      ".snm" ".nav" ".maf" ".html"
+				      ".djvu" ".docx" ".xls" ".webloc" ".gcx"
+				      ".png" ".jpg" ".jpeg" ".webp" ".gif"
+				      ".DS_Store" ".mp3" ".mp4" ".mkv" ".PNG"
+				      "e.el" ".localized" ".zip"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    IDO
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (require 'ido-vertical-mode)
+;; (ido-mode 1)
+;; (ido-vertical-mode 1)
+;; (setq ido-everywhere t)
+;; (require 'ido-completing-read+)
+;; (ido-ubiquitous-mode 1)
+;; (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
+;; ;;  (setq ido-enable-flex-matching t)		; unneeded ?  
+;; (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
+;; 				  ".ml" ".sh"))
+;; (setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
+;; 			       "Applications" "Calibre Library/"
+;; 			       "Library/" "Mail/" "Movies/"
+;; 			       "Music/" "News/" "Pictures/"
+;; 			       "Public/" "Sites/"))
+;; (defun ido-ignore-non-user-except (name)
+;;   "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
+;;   (and (string-match "^\*" name)
+;;        (not (string= name "*scratch*"))
+;;        (not (string= name "*GNU Emacs*"))))
+;; (setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
+;; (setq ido-ignore-extensions t)
+
+;; ;; completion-ignored-extensions (see above)
+
+;; (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
+
+;; (setq ido-max-work-file-list 20)
+;; ;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
+;; ;; requires that package ido-sort-mtime is installed
+
+;; ;; C-x C-f now uses ido-find-file.
+;; ;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
+;; ;; Useful to create a new file.
+
+;; ;; Use smex by default
+;; NOT WITH Vertico
+;; (global-set-key (kbd "M-x") 'smex)
+;; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; ;; This is your old M-x.
+;; (global-set-key (kbd "C-c M-x") 'execute-extended-command)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    IVY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (ivy-mode)
+;; (setq ivy-use-virtual-buffers t)
+;; (setq enable-recursive-minibuffers t)
+;; (setq ivy-count-format "(%d/%d) ")
+
+;; (global-set-key (kbd "M-x") 'counsel-M-x)
+;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;; (global-set-key (kbd "C-s") 'swiper-isearch)
+;; (global-set-key (kbd "M-y") 'counsel-yank-pop)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    VERTICO, CONSULT, ORDERLESS, PRESCIENT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; for more consult tricks: https://www.youtube.com/watch?v=HwBHBwYgs2g
+
+(use-package vertico
+  :ensure t
+  :bind (:map vertico-map
+              ("<right>" . vertico-next)
+              ("<left>" . vertico-previous)
+              ("C-f" . vertico-exit))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package consult
+  :ensure t
+  :init
+  (setq consult-buffer-filter
+	'("\\` " "\\`\\*Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'"))
+  :bind (("C-x b" . consult-buffer)
+	 ("M-s l" . consult-line)
+	 ("M-s o" . consult-outline)
+	 )
+  )
+
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :after vertico
+  :ensure t
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+
+(use-package vertico-prescient
+  :ensure t
+  )
+
+;; make find-file behave like ido-find-file
+
+;; C-DEL moves up a directory
+(define-key vertico-map (kbd "C-<backspace>") 'vertico-directory-up)
+(define-key vertico-map (kbd "M-<backspace>") 'vertico-directory-up)
+
+;; RET does not open directory in dired
+(define-key vertico-map (kbd "RET") 'vertico-directory-enter)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -560,7 +657,7 @@
 ;; Other AucTeX configuration
 ;; see http://www.stefanom.org/setting-up-a-nice-auctex-environment-on-mac-os-x/
 
-;; (setq TeX-auto-save t) ;; creates 'auto' subdirectory to
+(setq TeX-auto-save t) ;; creates 'auto' subdirectory to
 ;; keep information about macros for multifile projects.
 ;; Can be enabled on a per-file basis by adding
 ;; %%% TeX-auto-save: t
@@ -650,6 +747,7 @@
   '(progn
      (TeX-ispell-skip-setcar
       '(("\\\\jao" ispell-tex-arg-end)
+	("\\\\cite" ispell-tex-arg-end)
 	("\\\\citet" ispell-tex-arg-end)
 	("\\\\citep" ispell-tex-arg-end)
 	("\\\\eqref" ispell-tex-arg-end)
@@ -821,13 +919,6 @@
 ;; Momentary
 (add-hook 'text-mode-hook 'visual-line-mode)
 
-(defun unfill-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
-
-(global-set-key (kbd "M-Q") 'unfill-paragraph)
-
 ;; Try setting themes manually instead of using "custom"
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -840,7 +931,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(merlin-company nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+   '(vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper merlin-company nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
