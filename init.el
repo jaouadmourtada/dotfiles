@@ -12,6 +12,7 @@
 ;;;;    PARENTHESES
 ;;;;    SCROLLING CUSTOMIZATION
 ;;;;    IDO
+;;;;    VERTICO, CONSULT, ORDERLESS, PRESCIENT
 ;;;;    SPELL CHECKING
 ;;;;    CURSOR
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
@@ -258,17 +259,17 @@
 
 (require 'recentf)
 (recentf-mode 1)
-(setq recentf-max-saved-items 80
+(setq recentf-max-saved-items 90
       recentf-exclude 
       (append recentf-exclude
 	      '("~/.emacs.d/el-get/" "~$" "Library/" 
 		"~/.emacs.d/elpa/" "~/.emacs.d/url/"
 		"company-statistics-cache.el"
-		"[:ascii:]*loads.el"
-		"\\.log$"
-		"\\.aux$"
-		"\\.toc$"
-		"\\.sty$")
+		"/usr/" "~/.emacs.d/elpa"
+		"[:ascii:]*loads.el" ".DS_Store"
+		"\\.log$" "\\.aux$" "\\.toc$"
+		"\\.sty$" "\\.cls$" "\\.clo$"
+		"\\.vrb$" "\\.gz$")
 	      )
       )
 
@@ -280,6 +281,45 @@
 				      ".png" ".jpg" ".jpeg" ".webp" ".gif"
 				      ".DS_Store" ".mp3" ".mp4" ".mkv" ".PNG"
 				      "e.el" ".localized" ".zip"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    DIRED
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(global-set-key (kbd "C-x d") 'dired-jump)
+
+(defun quit-window-kill-buffer ()
+  "Quit the window but also kill the corresponding buffer."
+  (interactive)
+  (quit-window t))
+
+(define-key Info-mode-map (kbd "q") 'quit-window-kill-buffer)
+(define-key Buffer-menu-mode-map (kbd "q") 'quit-window-kill-buffer)
+
+(add-hook 'help-mode-hook
+	  (lambda ()
+	    (define-key help-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(with-eval-after-load "dired"
+  ;; Add other dired commands
+  ;; remove some if not needed
+  (define-key dired-mode-map (kbd "q") 'quit-window-kill-buffer)
+  (define-key dired-mode-map (kbd "b") 'dired-up-directory)
+  (define-key dired-mode-map (kbd "u") 'dired-up-directory)
+  (define-key dired-mode-map (kbd "C-c C-u") 'dired-up-directory)
+  (define-key dired-mode-map (kbd "C-<up>") 'dired-up-directory)
+  (define-key dired-mode-map (kbd "-") 'dired-unmark)
+  (define-key dired-mode-map (kbd "C-<down>") 'dired-find-file)
+  (define-key dired-mode-map (kbd "<tab>") 'dired-next-dirline)
+  (define-key dired-mode-map (kbd "S-<tab>") 'dired-prev-dirline)
+  (define-key dired-mode-map (kbd "C-n") 'dired-next-dirline)
+  (define-key dired-mode-map (kbd "C-p") 'dired-prev-dirline)
+  )
+
+(add-hook 'dired-mode-hook #'dired-hide-details-mode)
+;; use parenthesis to show details
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    IDO
@@ -367,7 +407,7 @@
   :ensure t
   :init
   (setq consult-buffer-filter
-	'("\\` " "\\`\\*Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'"))
+	'("\\` " "Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'" "output\\*\\'" "RefTeX" "\\*toc\\*" "Help\\*" "*Buffer List*" "*Backtrace*" "*Directory*" "magit-process:"))
   :bind (("C-x b" . consult-buffer)
 	 ("M-s l" . consult-line)
 	 ("M-s o" . consult-outline)
@@ -390,12 +430,14 @@
 
 (use-package vertico-prescient
   :ensure t
+  ;; :init
+  ;; (vertico-prescient-mode)
   )
 
 ;; make find-file behave like ido-find-file
 
 ;; C-DEL moves up a directory
-(define-key vertico-map (kbd "C-<backspace>") 'vertico-directory-up)
+;;(define-key vertico-map (kbd "C-<backspace>") 'vertico-directory-up) ;;test
 (define-key vertico-map (kbd "M-<backspace>") 'vertico-directory-up)
 
 ;; RET does not open directory in dired
