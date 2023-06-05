@@ -315,6 +315,7 @@
   (define-key dired-mode-map (kbd "S-<tab>") 'dired-prev-dirline)
   (define-key dired-mode-map (kbd "C-n") 'dired-next-dirline)
   (define-key dired-mode-map (kbd "C-p") 'dired-prev-dirline)
+  (define-key dired-mode-map (kbd ":") 'dired-isearch-filenames)
   )
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
@@ -438,7 +439,7 @@
 
 ;; C-DEL moves up a directory
 ;;(define-key vertico-map (kbd "C-<backspace>") 'vertico-directory-up) ;;test
-(define-key vertico-map (kbd "M-<backspace>") 'vertico-directory-up)
+;;(define-key vertico-map (kbd "M-<backspace>") 'vertico-directory-up)
 
 ;; RET does not open directory in dired
 (define-key vertico-map (kbd "RET") 'vertico-directory-enter)
@@ -716,10 +717,36 @@
 ;; "C-c )" directly works without extra RET step
 (setq reftex-ref-macro-prompt nil)
 
+(defun cite-format-tilde ()
+  "Add a tilde to the citation format if necessary."
+  (setq reftex-cite-format "~\\cite{%l}")
+  (when (member (preceding-char) '(?\ ?\t ?\n ?~))
+    (setq reftex-cite-format "\\cite{%l}"))
+  )
+
+(defun reftex-citation-tilde ()
+  "Modified version of reftex-citation that inserts a tilde if needed."
+  (interactive)
+  (cite-format-tilde)
+  (reftex-citation)  
+  )
+
+;; reftex keybindings
+(add-hook 'reftex-mode-hook
+	  #'(lambda ()
+	      (define-key reftex-mode-map (kbd "C-c l") 'reftex-label)
+	      (define-key reftex-mode-map (kbd "C-c r") 'reftex-reference)
+	      ;; modified reftex citation
+	      (define-key reftex-mode-map (kbd "C-c c") 'reftex-citation-tilde)
+	      ;; original reftex citation
+	      ;(define-key reftex-mode-map (kbd "C-c c") 'reftex-citation)
+	      ))
+
 ;; automatically pair dollars
 (add-hook 'LaTeX-mode-hook
 	  #'(lambda ()
-	      (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)))
+	      (define-key LaTeX-mode-map (kbd "$") 'self-insert-command)
+	      ))
 
 ;; automatically pair
 ;; (defvar latex-electric-pairs '(
@@ -731,9 +758,25 @@
 ;;   (setq-local electric-pair-text-pairs electric-pair-pairs))
 ;; (add-hook 'LaTeX-mode-hook 'latex-add-electric-pairs)
 
+;; set backslash (escape) character as part of the word in auctex
+;; allows C-left to jump before it
+;; Also, now backward-up-list identifies the braces (solves above issue)
+;; try it
+(defun pglpm/modify-LaTeX-mode-syntax-table ()
+  (modify-syntax-entry (string-to-char TeX-esc)
+                       "w"
+                       LaTeX-mode-syntax-table))
+
+(add-hook 'LaTeX-mode-hook #'pglpm/modify-LaTeX-mode-syntax-table)
+
+;; do not ask for optional arguments
+(setq TeX-insert-macro-default-style 'mandatory-args-only)
+
 ;; Add backends provided by company-auctex to company-backends
 (require 'company-auctex)
 (company-auctex-init)
+;; do not add $...$ when inserting a math symbol in text mode
+(setq company-auctex-symbol-math-symbol nil)
 
 ;; Use Skim as viewer, enable source <-> PDF sync
 ;; make latexmk available via C-c C-c
@@ -802,7 +845,6 @@
      ))
 
 ;; folding sections and navigation
-
 (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
 
 (eval-after-load 'outline
