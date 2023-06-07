@@ -410,8 +410,8 @@
   (setq consult-buffer-filter
 	'("\\` " "Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'" "output\\*\\'" "RefTeX" "\\*toc\\*" "Help\\*" "*Buffer List*" "*Backtrace*" "*Directory*" "magit-process:"))
   :bind (("C-x b" . consult-buffer)
-	 ("M-s l" . consult-line)
-	 ("M-s o" . consult-outline)
+	 ("M-s" . consult-line) ; previously: M-s l
+	 ("M-o" . consult-outline) ; previously: M-s o
 	 )
   )
 
