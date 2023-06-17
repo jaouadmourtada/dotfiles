@@ -269,7 +269,7 @@
 		"[:ascii:]*loads.el" ".DS_Store"
 		"\\.log$" "\\.aux$" "\\.toc$"
 		"\\.sty$" "\\.cls$" "\\.clo$"
-		"\\.vrb$" "\\.gz$")
+		"\\.vrb$" "\\.gz$" "\\.html")
 	      )
       )
 
@@ -295,10 +295,26 @@
 
 (define-key Info-mode-map (kbd "q") 'quit-window-kill-buffer)
 (define-key Buffer-menu-mode-map (kbd "q") 'quit-window-kill-buffer)
+;;(define-key debugger-mode-map (kbd "q") 'quit-window-kill-buffer)
 
 (add-hook 'help-mode-hook
 	  (lambda ()
 	    (define-key help-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(add-hook 'magit-mode-hook
+	  (lambda ()
+	    (define-key magit-revision-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(add-hook 'completion-list-mode
+	  (lambda ()
+	    (define-key completion-list-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(add-hook 'reftex-toc-mode-hook
+	  (lambda ()
+	    (define-key reftex-toc-mode-map (kbd "q") 'quit-window-kill-buffer))
 	  )
 
 (with-eval-after-load "dired"
@@ -739,7 +755,7 @@
 	      ;; modified reftex citation
 	      (define-key reftex-mode-map (kbd "C-c c") 'reftex-citation-tilde)
 	      ;; original reftex citation
-	      ;(define-key reftex-mode-map (kbd "C-c c") 'reftex-citation)
+	      ;; (define-key reftex-mode-map (kbd "C-c c") 'reftex-citation)
 	      ))
 
 ;; automatically pair dollars
@@ -875,7 +891,7 @@
   (insert "\n% ================\n\\cvpub%\n"
 	  "[" (read-string "STATUS: preprint | major | minor | accepted | published: [preprint] " nil nil "preprint") "]% status\n"
 	  ;; ido-completing-read?
-	  "{" (read-string "Year: [2021] " nil nil "2021") "}% year\n"
+	  "{" (read-string "Year: [2023] " nil nil "2023") "}% year\n"
 	  "{" (read-string "Title: ") "}% title\n"
 	  "{" (read-string "Authors: [J. Mourtada] " nil nil "J. Mourtada") "}% authors\n"
 	  "{" (read-string "arXiv id: ") "}% arXiv id\n"
