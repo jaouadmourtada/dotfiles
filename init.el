@@ -25,6 +25,7 @@
 ;;;;    AUTO-REVERT
 ;;;;    ORG
 ;;;;    AUCTEX
+;;;;    CITAR
 ;;;;    IMENU
 ;;;;    SHELL
 ;;;;    PYTHON
@@ -302,9 +303,24 @@
 	    (define-key help-mode-map (kbd "q") 'quit-window-kill-buffer))
 	  )
 
+(add-hook 'special-mode-hook
+	  (lambda ()
+	    (define-key special-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
 (add-hook 'magit-mode-hook
 	  (lambda ()
 	    (define-key magit-revision-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(add-hook 'magit-diff-mode-hook
+	  (lambda ()
+	    (define-key magit-diff-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+(add-hook 'magit-process-mode-hook
+	  (lambda ()
+	    (define-key magit-process-mode-map (kbd "q") 'quit-window-kill-buffer))
 	  )
 
 (add-hook 'completion-list-mode
@@ -902,6 +918,33 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    CITAR
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; bibliography management
+
+(use-package citar
+  :ensure t
+  :config
+  (setq citar-indicators nil) ;; removes space on the left
+  (setq citar-latex-prompt-for-cite-style nil) ;; always insert with 'cite'
+  :bind ("C-c q" . citar-insert-citation)
+  :custom
+  (citar-bibliography '("~/Dropbox/taf/biblio.bib"))  
+  (citar-templates
+   '((main . "${author:18%sn}   ${date year issued:4}   ${title:32}   ${journal booktitle publisher:20}") ;; %sn or %etal
+     (suffix . "     ${=key= id:15}    ${tags keywords:*}")
+     (preview . "${author editor:%etal} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
+     (note . "Notes on ${author editor:%etal}, ${title}")))
+  )
+
+;; (setq citar-templates
+;;       '((main . "${title:37}  ${date year issued:4}  ${author:18%sn}  ${journal booktitle publisher:18}")
+;; 	(suffix . "   ${=key= id:*}") ;; %sn or %etal
+;; 	(preview . "${author editor:%etal} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
+;; 	(note . "Notes on ${author editor:%etal}, ${title}")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    IMENU
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1031,7 +1074,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper merlin-company nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+   '(citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper merlin-company nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode tuareg markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
