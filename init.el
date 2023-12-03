@@ -14,6 +14,8 @@
 ;;;;    IDO
 ;;;;    VERTICO, CONSULT, ORDERLESS, PRESCIENT
 ;;;;    SPELL CHECKING
+;;;;    AUTOCOMPLETE
+;;;;    YASNIPPET
 ;;;;    CURSOR
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;    GRAPHICAL USER INTERFACE
@@ -29,8 +31,6 @@
 ;;;;    IMENU
 ;;;;    SHELL
 ;;;;    PYTHON
-;;;;    AUTOCOMPLETE
-;;;;    YASNIPPET
 ;;;;    MARKDOWN
 ;;;;    MERLIN
 ;;;;    CUSTOM
@@ -64,14 +64,14 @@
  'package-archives
  '("melpa" . "http://melpa.org/packages/")
  t)
-;; (package-initialize) ; de-activated since emacs 27:
-;; Warning (package): Unnecessary call to ‘package-initialize’ in init file
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    USE-PACKAGE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (eval-when-compile
+  ;; Following line is not needed if use-package.el is in ~/.emacs.d
+  (add-to-list 'load-path "~/.emacs.d/use-package/")
   (require 'use-package))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -89,19 +89,27 @@
 ;; tuareg, ocamldebug, tuareg_indent, tuareg-site-file
 
 ;; aggressive-indent mode
-;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
-(global-aggressive-indent-mode 1) ;; enable all
-;; (add-to-list 'aggressive-indent-excluded-modes 'shell-script-mode)
-;; disable one
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (global-aggressive-indent-mode 1)
+  )
+;; ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode) ;; enable one
+;; (global-aggressive-indent-mode 1) ;; enable all
+;; ;; (add-to-list 'aggressive-indent-excluded-modes 'shell-script-mode)
+;; ;; disable one
 
 ;; (load "minimap") ;; M-x minimap-mode to activate minimap.
 ;; add a hook (length <- 108) for minimap-mode.
 
 ;; Auto-start Smex every time you open Emacs.
-(load "smex")
-(require 'smex) ;; Not needed if you use package.el
-(smex-initialize) ;; Can be omitted. This might cause a (minimal) delay
-;; when Smex is auto-initialized on its first run.
+;; no longer needed/used
+;; (use-package smex
+;;   :ensure t
+;;   :config
+;;   (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
+;;   ;; when Smex is auto-initialized on its first run.
+;;   )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -204,9 +212,17 @@
 
 ;;; Zoom in/out (text scale)
 ;; default-text-scale mode: change text scale globally (add 1 size)
-(global-set-key (kbd "C-+") 'default-text-scale-increase)
-(global-set-key (kbd "C--") 'default-text-scale-decrease)
-(global-set-key (kbd "C-=") 'default-text-scale-reset)
+(use-package default-text-scale
+  :ensure t
+  :bind (("C-+" . default-text-scale-increase)
+         ("C--" . default-text-scale-decrease)
+         ("C-=" . default-text-scale-reset))
+  )
+
+;; (global-set-key (kbd "C-+") 'default-text-scale-increase)
+;; (global-set-key (kbd "C--") 'default-text-scale-decrease)
+;; (global-set-key (kbd "C-=") 'default-text-scale-reset)
+
 ;; text-scale-increase below is buffer-specific rather than global/default (less useful/deprecated)
 ;; (setq text-scale-mode-step 1.07) ; scale size by 1.07 instead of 1.2 factor
 ;; (global-set-key (kbd "C-x C-+") 'text-scale-increase)
@@ -263,25 +279,28 @@
 (setq recentf-max-saved-items 90
       recentf-exclude 
       (append recentf-exclude
-	      '("~/.emacs.d/el-get/" "~$" "Library/" 
+	      '("~/.emacs.d/el-get/" "~$" "Library/"
+		"/Applications/"
 		"~/.emacs.d/elpa/" "~/.emacs.d/url/"
 		"company-statistics-cache.el"
 		"/usr/" "~/.emacs.d/elpa"
 		"[:ascii:]*loads.el" ".DS_Store"
 		"\\.log$" "\\.aux$" "\\.toc$"
 		"\\.sty$" "\\.cls$" "\\.clo$"
-		"\\.vrb$" "\\.gz$" "\\.html")
+		"\\.vrb$" "\\.gz$" "\\.html"
+		"\\.bbl$")
 	      )
       )
 
 (setq completion-ignored-extensions '("~" ".bak" ".aux" ".out" ".bbl"
 				      ".blg" ".fdb_latexmk" ".fls" ".gz"
 				      ".cls" ".sty" ".log" ".pdf" ".toc"
-				      ".snm" ".nav" ".maf" ".html"
+				      ".snm" ".nav" ".maf" ".vrb" ".html"
 				      ".djvu" ".docx" ".xls" ".webloc" ".gcx"
 				      ".png" ".jpg" ".jpeg" ".webp" ".gif"
 				      ".DS_Store" ".mp3" ".mp4" ".mkv" ".PNG"
-				      "e.el" ".localized" ".zip"))
+				      "e.el" ".localized" ".zip"
+				      "auto/" ".git/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    DIRED
@@ -311,6 +330,12 @@
 (add-hook 'magit-mode-hook
 	  (lambda ()
 	    (define-key magit-revision-mode-map (kbd "q") 'quit-window-kill-buffer))
+	  )
+
+;; remove the one below?
+(add-hook 'magit-status-mode-hook
+	  (lambda ()
+	    (define-key magit-status-mode-map (kbd "q") 'quit-window-kill-buffer))
 	  )
 
 (add-hook 'magit-diff-mode-hook
@@ -440,7 +465,7 @@
   :ensure t
   :init
   (setq consult-buffer-filter
-	'("\\` " "Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'" "output\\*\\'" "RefTeX" "\\*toc\\*" "Help\\*" "*Buffer List*" "*Backtrace*" "*Directory*" "magit-process:"))
+	'("\\` " "Completions\\*\\'" "\\`\\*Flymake log\\*\\'" "\\`\\*Semantic SymRef\\*\\'" "\\`\\*tramp/.*\\*\\'" "\\`\\*Messages\\*\\'" "Output\\*\\'" "output\\*\\'" "RefTeX" "\\*toc\\*" "Help\\*" "*Buffer List*" "*Backtrace*" "*Directory*" "magit-process:" "magit-diff:"))
   :bind (("C-x b" . consult-buffer)
 	 ("M-s" . consult-line) ; previously: M-s l
 	 ("M-o" . consult-outline) ; previously: M-s o
@@ -547,6 +572,63 @@
 ;; '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
 ;;  ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    AUTOCOMPLETE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; company-mode
+(use-package company
+  :ensure t
+  :config
+  (global-company-mode t)
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
+  ;; uses stats for better auto-completion suggestions
+  )
+
+;; company-statistcs: uses stats for better auto-completion suggestions
+(use-package company-statistics
+  :ensure t
+  ;; :pin gnu
+  :init
+  (add-hook 'after-init-hook 'company-statistics-mode)
+  )
+
+;; todo-done
+;; (autoload 'company-mode "company" nil t)
+;; (global-company-mode t)
+;; (setq company-idle-delay 0)
+;; (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
+;; (add-hook 'after-init-hook 'company-statistics-mode)
+;; ;; uses stats for better auto-completion suggestions
+
+;; alternatives to company-mode: auto-complete and corfu
+;; (require 'auto-complete)
+;; (global-auto-complete-mode t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    YASNIPPET
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package yasnippet
+  :ensure t
+  ;; :pin gnu
+  :config
+  (yas-global-mode 1)
+  ;; or M-x yas-reload-all if you've started YASnippet already
+  ;; (setq yas-snippet-dirs '("~/emacs.d/snippets/"))
+  :bind-keymap
+  ("C-o" . yas-expand)
+  )
+
+;; todo-done
+;; ;; (setq yas-snippet-dirs '("~/emacs.d/snippets/"))
+;; (yas-global-mode 1)
+;; ;; or M-x yas-reload-all if you've started YASnippet already
+;; (eval-after-load 'yasnippet
+;;   '(progn          
+;;      (define-key yas-keymap (kbd "C-o") 'yas-expand)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CURSOR
@@ -562,25 +644,37 @@
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; linum-mode leads to a bug in Company where the cursor jumps accross the screen
+;; linum-mode leads to a bug in Company where cursor jumps accross the screen
 ;; It also leads to performance issues when used with folding
-;; As a result, it is probably best turned off
-;; (global-linum-mode t)
-;; (setq linum-format "%3d")
-;; ;; (setq linum-format "%4d \u2502")
+;; As a result, it is probably best turned off (also it is deprecated)
 
-;; more modern alternative: nlinum-mode; does not lead to the same bug
-(global-nlinum-mode t)
-;; (setq nlinum-format "%3d")
+;; more modern alternative: nlinum-mode; does not lead to the previous bug
+(use-package nlinum
+  :ensure t
+  :config
+  (global-nlinum-mode t)
+  )
+;; (global-nlinum-mode t)
+;; ;; (setq nlinum-format "%3d")
 
 ;; A better alternative is display-line-numbers-mode, which does not have these issues, although it takes up more space
 ;; (global-display-line-numbers-mode)
 
 ;; hlinum-mode extends linum-mode to highlight current line number.
 ;; Available in MELPA
-(require 'hlinum)
-(hlinum-activate)
-;; (hlinum-deactivate) ;; to deactivate
+
+(use-package hlinum
+  :ensure t
+  :config
+  (hlinum-activate)
+  ;; hlinum-deactivate to deactivate
+  )
+
+;; todo-done
+;; (require 'hlinum)
+;; (hlinum-activate)
+;; ;; (hlinum-deactivate) ;; to deactivate
+
 (global-hl-line-mode) ;; highlights current line
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -617,9 +711,18 @@
 ;;;;    POWERLINE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when window-system
-  (require 'powerline)
-  (powerline-default-theme))
+(use-package powerline
+  :if window-system
+  :ensure t
+  :config
+  (powerline-default-theme)
+  )
+
+;; todo-done
+;; (when window-system
+;;   (require 'powerline)
+;;   (powerline-default-theme)
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    THEMES
@@ -628,34 +731,45 @@
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
-;; (require 'powerline) ;; already added
 ;; (load-theme 'misterioso t) ;; e.g. zenburn, solarized, misterioso, adwaita, gotham, waher, warm-night, zerodark.
 ;; (set-cursor-color 'Orange) ;; see "cursor". Improves misterioso
-(require 'moe-theme)
-;; (moe-dark) ;; moe-dark or moe-light
-;; (moe-theme-set-color 'orange) ;; default : blue
-;; (require 'moe-theme-switcher) ;; day: light theme, night: dark theme
 
-;; after moe-theme update: replace set-color by apply-color
-(defun night-moe-theme ()
-  (interactive)
-  (moe-dark)
-  ;;(moe-theme-set-color 'blue)
-  (moe-theme-apply-color 'blue)
-  )
-
-;; after moe-theme update: replace set-color by apply-color
-(defun day-moe-theme ()
-  (interactive)
+(use-package moe-theme
+  :ensure t
+  :config
   (moe-light)
-  ;;(moe-theme-set-color 'orange)
-  (moe-theme-apply-color 'orange)  
+  (moe-theme-apply-color 'orange)
+  (defun night-moe-theme ()
+    (interactive)
+    (moe-dark)
+    (moe-theme-apply-color 'blue))
+  (defun day-moe-theme ()
+    (interactive)
+    (moe-light)
+    (moe-theme-apply-color 'orange))
   )
 
-(moe-light)
-;;(moe-theme-set-color 'orange)
-(moe-theme-apply-color 'orange)
-;;(moe-theme-select-color 'orange) ;; interactive
+;; todo-done
+;; (require 'moe-theme)
+;; ;; (moe-dark) ;; moe-dark or moe-light
+;; after moe-theme update: replace set-color by apply-color
+;; ;; (moe-theme-apply-color 'orange) ;; default : blue
+
+;; (defun night-moe-theme ()
+;;   (interactive)
+;;   (moe-dark)
+;;   (moe-theme-apply-color 'blue)
+;;   )
+
+;; (defun day-moe-theme ()
+;;   (interactive)
+;;   (moe-light)
+;;   (moe-theme-apply-color 'orange)  
+;;   )
+
+;; (moe-light)
+;; (moe-theme-apply-color 'orange)
+;; ;;(moe-theme-select-color 'orange) ;; interactive
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -704,12 +818,6 @@
 
 (add-hook 'org-mode-hook (lambda () (set-input-method "TeX")))
 (global-set-key (kbd "C-c a") 'org-agenda)
-
-;; turn off linum mode in org mode
-;; no longer needed as linum-mode is now turned off by default
-;; (defun turn-off-linum-mode ()
-;;   (linum-mode -1))
-;; (add-hook 'org-mode-hook 'turn-off-linum-mode)
 
 ;; C-up and down to navigate
 (with-eval-after-load "org"
@@ -805,10 +913,19 @@
 (setq TeX-insert-macro-default-style 'mandatory-args-only)
 
 ;; Add backends provided by company-auctex to company-backends
-(require 'company-auctex)
-(company-auctex-init)
-;; do not add $...$ when inserting a math symbol in text mode
-(setq company-auctex-symbol-math-symbol nil)
+(use-package company-auctex
+  :ensure t
+  :config
+  (company-auctex-init)
+  ;; do not add $...$ when inserting a math symbol in text mode
+  (setq company-auctex-symbol-math-symbol nil)
+  )
+
+;; todo-done
+;; (require 'company-auctex)
+;; (company-auctex-init)
+;; ;; do not add $...$ when inserting a math symbol in text mode
+;; (setq company-auctex-symbol-math-symbol nil)
 
 ;; Use Skim as viewer, enable source <-> PDF sync
 ;; make latexmk available via C-c C-c
@@ -879,6 +996,11 @@
 ;; folding sections and navigation
 (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
 
+(use-package outline-magic
+  :ensure t
+  :defer t
+  )
+
 (eval-after-load 'outline
   '(progn
      (require 'outline-magic)
@@ -944,6 +1066,16 @@
 ;; 	(preview . "${author editor:%etal} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
 ;; 	(note . "Notes on ${author editor:%etal}, ${title}")))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;    MAGIT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)
+         ("C-x C-g" . magit-status)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    IMENU
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -959,56 +1091,47 @@
 ;; Ensure environment variables inside GUI Emacs in OS X are the same
 ;; as in the user's shell
 
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)
+  )
+
+;; todo-done
+;; (when (memq window-system '(mac ns))
+;;   (exec-path-from-shell-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    PYTHON
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; use elpy for python
-(package-initialize)
-(elpy-enable)
+(use-package elpy
+  :ensure t
+  :defer t ;; defer elpy loading
+  :init
+  (advice-add 'python-mode :before 'elpy-enable)
+  )
 
-(with-eval-after-load 'python
-  (defun python-shell-completion-native-try ()
-    "Return non-nil if can trigger native completion."
-    (let ((python-shell-completion-native-enable t)
-          (python-shell-completion-native-output-timeout
-           python-shell-completion-native-try-output-timeout))
-      (python-shell-completion-native-get-completions
-       (get-buffer-process (current-buffer))
-       nil "_"))))
+;; todo-done
+;; (package-initialize)
+;; (elpy-enable)
+
+;; below: no longer needed?
+;; (with-eval-after-load 'python
+;;   (defun python-shell-completion-native-try ()
+;;     "Return non-nil if can trigger native completion."
+;;     (let ((python-shell-completion-native-enable t)
+;;           (python-shell-completion-native-output-timeout
+;;            python-shell-completion-native-try-output-timeout))
+;;       (python-shell-completion-native-get-completions
+;;        (get-buffer-process (current-buffer))
+;;        nil "_"))))
 
 ;; use ipython (instead of python) as the default shell
 ;; make sure ipython is installed
 ;; (elpy-use-ipython) ; doesn't work
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    AUTOCOMPLETE
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Alternative : either auto-complete-mode, or company-mode
-
-(autoload 'company-mode "company" nil t)
-(global-company-mode t)
-(setq company-idle-delay 0)
-(setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
-(add-hook 'after-init-hook 'company-statistics-mode)
-;; uses stats for better auto-completion suggestions
-
-;; (require 'auto-complete)
-;; (global-auto-complete-mode t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    YASNIPPET
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;(setq yas-snippet-dirs '("~/emacs.d/snippets/"))
-(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already
-(eval-after-load 'yasnippet
-  '(progn          
-     (define-key yas-keymap (kbd "C-o") 'yas-expand)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MARKDOWN
@@ -1026,34 +1149,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; use jemdoc-mode
+(use-package jemdoc-mode
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    WEB
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (require 'company) 
-(require 'company-web-html)  ; load company mode html backend
+;; load company mode html backend
+;; is it needed?
+;; (use-package company-web
+;;   :ensure t)
+;; (require 'company-web-html)  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    MERLIN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Add opam emacs directory to your load-path by appending this to your .emacs:
-(let ((opam-share (ignore-errors (car (process-lines "opam" "var"
-						     "share")))))
-  (when (and opam-share (file-directory-p opam-share))
-    ;; Register Merlin
-    (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-    (autoload 'merlin-mode "merlin" nil t nil)
-    ;; Automatically start it in OCaml buffers
-    (add-hook 'tuareg-mode-hook 'merlin-mode t)
-    (add-hook 'caml-mode-hook 'merlin-mode t)
-    ;; Use opam switch to lookup ocamlmerlin binary
-    (setq merlin-command 'opam)))
-;; Take a look at https://github.com/ocaml/merlin for more information
+;; commented below because of some error message
 
-(require 'merlin-company)
-;; should be enough to get merlin to work within company
+;; ;; Add opam emacs directory to your load-path by appending this to your .emacs:
+;; (let ((opam-share (ignore-errors (car (process-lines "opam" "var"
+;; 						     "share")))))
+;;   (when (and opam-share (file-directory-p opam-share))
+;;     ;; Register Merlin
+;;     (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+;;     (autoload 'merlin-mode "merlin" nil t nil)
+;;     ;; Automatically start it in OCaml buffers
+;;     (add-hook 'tuareg-mode-hook 'merlin-mode t)
+;;     (add-hook 'caml-mode-hook 'merlin-mode t)
+;;     ;; Use opam switch to lookup ocamlmerlin binary
+;;     (setq merlin-command 'opam)))
+;; ;; Take a look at https://github.com/ocaml/merlin for more information
+
+;; (require 'merlin-company)
+;; ;; should be enough to get merlin to work within company
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CUSTOM 
