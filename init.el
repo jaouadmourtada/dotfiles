@@ -916,6 +916,16 @@
   (company-auctex-init)
   ;; do not add $...$ when inserting a math symbol in text mode
   (setq company-auctex-symbol-math-symbol nil)
+  (defun company-auctex-snippet-arg (arg)
+    (let* ((opt (vectorp arg))
+           (item (if opt (elt arg 0) arg))
+           (var (format "${%s}" item)))
+      (if opt
+          ;; (concat "${[" var "]}") ;; to include optional args
+	  nil ;; to omit optional arguments (NB: nil = ())
+	(concat "{" var "}")
+	)
+      ))
   )
 
 ;; todo-done
