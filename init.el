@@ -11,7 +11,6 @@
 ;;;;    KEY BINDINGS
 ;;;;    PARENTHESES
 ;;;;    SCROLLING CUSTOMIZATION
-;;;;    IDO
 ;;;;    VERTICO, CONSULT, ORDERLESS, PRESCIENT
 ;;;;    SPELL CHECKING
 ;;;;    AUTOCOMPLETE
@@ -376,67 +375,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    IDO
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (require 'ido-vertical-mode)
-;; (ido-mode 1)
-;; (ido-vertical-mode 1)
-;; (setq ido-everywhere t)
-;; (require 'ido-completing-read+)
-;; (ido-ubiquitous-mode 1)
-;; (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
-;; ;;  (setq ido-enable-flex-matching t)		; unneeded ?  
-;; (setq ido-file-extensions-order '(".org" ".txt" ".tex" ".py" ".el"
-;; 				  ".ml" ".sh"))
-;; (setq ido-ignore-directories '("\\`CVS/" "\\`\\.\\./" "\\`\\./"
-;; 			       "Applications" "Calibre Library/"
-;; 			       "Library/" "Mail/" "Movies/"
-;; 			       "Music/" "News/" "Pictures/"
-;; 			       "Public/" "Sites/"))
-;; (defun ido-ignore-non-user-except (name)
-;;   "Ignore all non-user (a.k.a. *starred*) buffers except for a few."
-;;   (and (string-match "^\*" name)
-;;        (not (string= name "*scratch*"))
-;;        (not (string= name "*GNU Emacs*"))))
-;; (setq ido-ignore-buffers '("\\` " ido-ignore-non-user-except))
-;; (setq ido-ignore-extensions t)
-
-;; ;; completion-ignored-extensions (see above)
-
-;; (setq ido-use-virtual-buffers t)   ; keeps track of recently opened buffers
-
-;; (setq ido-max-work-file-list 20)
-;; ;;(ido-sort-mtime-mode 1) ; sort files by modif time instead of alphabetically
-;; ;; requires that package ido-sort-mtime is installed
-
-;; ;; C-x C-f now uses ido-find-file.
-;; ;; To leave ido, use C-f (file), C-b (buffer), C-d (dired)
-;; ;; Useful to create a new file.
-
-;; ;; Use smex by default
-;; NOT WITH Vertico
-;; (global-set-key (kbd "M-x") 'smex)
-;; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; ;; This is your old M-x.
-;; (global-set-key (kbd "C-c M-x") 'execute-extended-command)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;    IVY
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (ivy-mode)
-;; (setq ivy-use-virtual-buffers t)
-;; (setq enable-recursive-minibuffers t)
-;; (setq ivy-count-format "(%d/%d) ")
-
-;; (global-set-key (kbd "M-x") 'counsel-M-x)
-;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;; (global-set-key (kbd "C-s") 'swiper-isearch)
-;; (global-set-key (kbd "M-y") 'counsel-yank-pop)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    VERTICO, CONSULT, ORDERLESS, PRESCIENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -591,14 +529,6 @@
   (add-hook 'after-init-hook 'company-statistics-mode)
   )
 
-;; todo-done
-;; (autoload 'company-mode "company" nil t)
-;; (global-company-mode t)
-;; (setq company-idle-delay 0)
-;; (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
-;; (add-hook 'after-init-hook 'company-statistics-mode)
-;; ;; uses stats for better auto-completion suggestions
-
 ;; alternatives to company-mode: auto-complete and corfu
 ;; (require 'auto-complete)
 ;; (global-auto-complete-mode t)
@@ -614,18 +544,10 @@
   (yas-global-mode 1)
   ;; or M-x yas-reload-all if you've started YASnippet already
   ;; (setq yas-snippet-dirs '("~/emacs.d/snippets/"))
-  :bind-keymap
+  ;;;  :bind-keymap
+  :bind
   ("C-o" . yas-expand)
   )
-
-;; todo-done
-;; ;; (setq yas-snippet-dirs '("~/emacs.d/snippets/"))
-;; (yas-global-mode 1)
-;; ;; or M-x yas-reload-all if you've started YASnippet already
-;; (eval-after-load 'yasnippet
-;;   '(progn          
-;;      (define-key yas-keymap (kbd "C-o") 'yas-expand)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    CURSOR
@@ -636,6 +558,9 @@
 
 ;; Remember and restore the last cursor location of opened files
 (save-place-mode 1)
+
+;; Momentary
+(add-hook 'text-mode-hook 'visual-line-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    LINE NUMBERING AND HIGHLIGHTING
@@ -651,26 +576,17 @@
   :config
   (global-nlinum-mode t)
   )
-;; (global-nlinum-mode t)
-;; ;; (setq nlinum-format "%3d")
 
 ;; A better alternative is display-line-numbers-mode, which does not have these issues, although it takes up more space
 ;; (global-display-line-numbers-mode)
 
-;; hlinum-mode extends linum-mode to highlight current line number.
-;; Available in MELPA
-
 (use-package hlinum
+  ;; highlight current line number
   :ensure t
   :config
   (hlinum-activate)
   ;; hlinum-deactivate to deactivate
   )
-
-;; todo-done
-;; (require 'hlinum)
-;; (hlinum-activate)
-;; ;; (hlinum-deactivate) ;; to deactivate
 
 (global-hl-line-mode) ;; highlights current line
 
@@ -715,16 +631,9 @@
   (powerline-default-theme)
   )
 
-;; todo-done
-;; (when window-system
-;;   (require 'powerline)
-;;   (powerline-default-theme)
-;;   )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    THEMES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/emacs-color-theme-solarized")
@@ -745,29 +654,6 @@
     (moe-light)
     (moe-theme-apply-color 'orange))
   )
-
-;; todo-done
-;; (require 'moe-theme)
-;; ;; (moe-dark) ;; moe-dark or moe-light
-;; after moe-theme update: replace set-color by apply-color
-;; ;; (moe-theme-apply-color 'orange) ;; default : blue
-
-;; (defun night-moe-theme ()
-;;   (interactive)
-;;   (moe-dark)
-;;   (moe-theme-apply-color 'blue)
-;;   )
-
-;; (defun day-moe-theme ()
-;;   (interactive)
-;;   (moe-light)
-;;   (moe-theme-apply-color 'orange)  
-;;   )
-
-;; (moe-light)
-;; (moe-theme-apply-color 'orange)
-;; ;;(moe-theme-select-color 'orange) ;; interactive
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    FRAME SIZE
@@ -921,8 +807,8 @@
            (item (if opt (elt arg 0) arg))
            (var (format "${%s}" item)))
       (if opt
-          ;; (concat "${[" var "]}") ;; to include optional args
-	  nil ;; to omit optional arguments (NB: nil = ())
+          ;; (concat "${[" var "]}") ;; original code
+	  nil ;; instead: omit optional arguments (NB: nil = ())
 	(concat "{" var "}")
 	)
       ))
@@ -963,10 +849,11 @@
 
 ;; RefTeX : add environment
 (setq reftex-label-alist
-      '(("lemma"   ?l "lem:"  "~\\ref{%s}" nil ("lemma" "lemme" "lemmas"))
+      '(("lemma" ?l "lem:" "~\\ref{%s}" t ("lemma" "lemme" "lemmas"))
       	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème" "theorems") -3)
       	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
       	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition" "propositions"))
+	("fact" ?f "fac:" "~\\ref{%s}" nil ("fact" "facts" "fait"))
       	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
 	("remark" ?r "rem:" "~\\ref{%s}" nil ("remark" "remarque"))
 	("example" ?x "ex:" "~\\ref{%s}" nil ("example" "exemple"))
@@ -1221,8 +1108,8 @@
 ;;;;    CUSTOM 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Momentary
-(add-hook 'text-mode-hook 'visual-line-mode)
+;; Only needed in Emacs 28, to show 'about' screen
+(add-to-list 'image-types 'svg)
 
 ;; Try setting themes manually instead of using "custom"
 (custom-set-variables
@@ -1236,7 +1123,7 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(merlin-company merlin tuareg citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+   '(merlin merlin-company tuareg citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
  '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
