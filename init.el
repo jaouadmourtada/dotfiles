@@ -511,6 +511,14 @@
 ;;;;    AUTOCOMPLETE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; ;; quick fix to company not loading properly in auctex?
+
+;; (autoload 'company-mode "company" nil t)
+;; (global-company-mode t)
+;; (setq company-idle-delay 0)
+;; (setq company-minimum-prefix-length 2) ;; starts autocompletion sooner
+;; (add-hook 'after-init-hook 'company-statistics-mode)
+
 ;; company-mode
 (use-package company
   :ensure t
@@ -529,9 +537,77 @@
   (add-hook 'after-init-hook 'company-statistics-mode)
   )
 
-;; alternatives to company-mode: auto-complete and corfu
-;; (require 'auto-complete)
-;; (global-auto-complete-mode t)
+;; ;; Enable corfu globally
+;; (use-package corfu
+;;   :ensure t
+;;   :init
+;;   (global-corfu-mode)
+;;   :custom
+;;   (corfu-cycle t)                ;; Enable cycling for completions
+;;   (corfu-auto t)                 ;; Enable auto-completion
+;;   (corfu-auto-prefix 2)          ;; Minimum prefix length before auto-completion starts
+;;   (corfu-auto-delay 0.1)         ;; Faster auto-completion
+;;   (corfu-popupinfo-mode t)       ;; Enable documentation popup
+;;   (corfu-preselect 'directory) ;; Select the first candidate, except for directories
+;;   :config
+;;   (setq corfu-quit-no-match 'separator)  ;; Avoid annoying completion exit
+;;   (setq corfu-preview-current nil)       ;; Don't preview the current completion candidate
+;;   (setq corfu-preselect 'prompt)         ;; Preselect the first candidate
+;;   (setq corfu-popupinfo-delay '(0.5 . 1.0))  ;; Delay for popups
+;;   (setq corfu-popupinfo-direction 'bottom)  ;; Popup below the completion menu  
+;;   (corfu-popupinfo-mode 1)                ;; Show inline documentation
+;;   (unless (display-graphic-p)
+;;     (use-package corfu-terminal
+;;       :ensure t
+;;       :config
+;;       (corfu-terminal-mode +1))))  ;; Enable corfu in terminal mode
+
+;; ;; Cape provides additional completion backends
+;; (use-package cape
+;;   :ensure t
+;;   :init
+;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev)  ;; Dynamic completion
+;;   (add-to-list 'completion-at-point-functions #'cape-file)     ;; File path completion
+;;   (add-to-list 'completion-at-point-functions #'cape-tex)      ;; TeX-specific completion
+;;   (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))  ;; Symbol completion
+
+;; ;; ;; Enable corfu in text-mode and LaTeX mode
+;; ;; (add-hook 'text-mode-hook #'corfu-mode)
+;; ;; (add-hook 'latex-mode-hook #'corfu-mode)
+
+;; ;; Use TAB for completion (optional)
+;; (define-key corfu-map (kbd "TAB") 'corfu-next)
+;; (define-key corfu-map (kbd "<backtab>") 'corfu-previous)
+
+;; (provide 'corfu-config)
+
+;; (use-package corfu
+;;   :ensure t
+;;   ;; Optional customizations
+;;   :custom
+;;   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+;;   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+;;   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+;;   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+;;   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+;;   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+;;   (corfu-auto t)               ;; Enable auto completion
+;;   (corfu-preselect 'directory) ;; Select the first candidate, except for directories
+;;   (corfu-quit-no-match 'separator) ;; Configure quitting
+;;   (corfu-auto-delay  0)  ;; TOO SMALL - NOT RECOMMENDED
+;;   (corfu-auto-prefix 0) ;; TOO SMALL - NOT RECOMMENDED
+
+;;   ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+;;   ;; :hook ((prog-mode . corfu-mode)
+;;   ;;        (shell-mode . corfu-mode)
+;;   ;;        (eshell-mode . corfu-mode))
+
+;;   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+;;   ;; be used globally (M-/).  See also the customization variable
+;;   ;; `global-corfu-modes' to exclude certain modes.
+;;   :init
+;;   (global-corfu-mode))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;    YASNIPPET
@@ -795,6 +871,28 @@
 ;; do not ask for optional arguments
 (setq TeX-insert-macro-default-style 'mandatory-args-only)
 
+;; better DEL: deletes full \command
+(defun my/latex-smart-backspace ()
+  "Smart backspace: if point is just after a LaTeX command (\\command), delete the whole command."
+  (interactive)
+  (let ((end (point)))
+    (when (and (not (bobp))
+               (save-excursion
+                 (backward-word)
+                 (looking-at "\\\\[a-zA-Z]+")
+                 (= (match-end 0) end)))
+      ;; Delete whole \command
+      (let ((start (match-beginning 0)))
+        (delete-region start end)))
+    ;; Fallback to regular delete-backward
+    (when (eq (point) end)
+      (delete-backward-char 1))))
+
+;; Bind DEL in LaTeX-mode
+(with-eval-after-load 'latex
+  (define-key LaTeX-mode-map (kbd "DEL") #'my/latex-smart-backspace))
+
+
 ;; Add backends provided by company-auctex to company-backends
 (use-package company-auctex
   :ensure t
@@ -923,7 +1021,7 @@
   (insert "\n% ================\n\\cvpub%\n"
 	  "[" (read-string "STATUS: preprint | major | minor | accepted | published: [preprint] " nil nil "preprint") "]% status\n"
 	  ;; ido-completing-read?
-	  "{" (read-string "Year: [2023] " nil nil "2023") "}% year\n"
+	  "{" (read-string "Year: [2024] " nil nil "2024") "}% year\n"
 	  "{" (read-string "Title: ") "}% title\n"
 	  "{" (read-string "Authors: [J. Mourtada] " nil nil "J. Mourtada") "}% authors\n"
 	  "{" (read-string "arXiv id: ") "}% arXiv id\n"
@@ -944,6 +1042,20 @@
   :config
   (setq citar-indicators nil) ;; removes space on the left
   (setq citar-latex-prompt-for-cite-style nil) ;; always insert with 'cite'
+  ;; advise citar-insert-citation to add ~ when needed
+  (defun my/citar-insert-tilde-if-needed (&rest _args)
+    "Insert ~ before citation in LaTeX if not already inside \\cite{}, and only after alphabetic characters."
+    (when (and (derived-mode-p 'latex-mode)
+               (fboundp 'citar-latex--macro-bounds)
+               (not (citar-latex--macro-bounds))
+               (not (bolp))
+               (save-excursion
+		 (backward-char)
+		 (let ((char (char-after)))
+                   (and (not (member char '(?\s ?~ ?\n)))
+			(char-equal (char-syntax char) ?w))))) ;; 'w' = word constituent (includes letters)
+      (insert "~")))
+  (advice-add 'citar-insert-citation :before #'my/citar-insert-tilde-if-needed)
   :bind ("C-c q" . citar-insert-citation)
   :custom
   (citar-bibliography '("~/Dropbox/taf/biblio.bib"))  
@@ -953,6 +1065,9 @@
      (preview . "${author editor:%etal} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
      (note . "Notes on ${author editor:%etal}, ${title}")))
   )
+
+;; below: quick fix for some issue; remove when no longer needed
+(setq bibtex-dialect 'bibtex)
 
 ;; (setq citar-templates
 ;;       '((main . "${title:37}  ${date year issued:4}  ${author:18%sn}  ${journal booktitle publisher:18}")
@@ -1123,8 +1238,12 @@
  '(org-agenda-files
    '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
  '(package-selected-packages
-   '(merlin merlin-company tuareg citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
- '(safe-local-variable-values '((TeX-parse-self . t) (TeX-auto-save . t))))
+   '(corfu merlin merlin-company tuareg citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+ '(safe-local-variable-values
+   '((ispell-local-dictionary . français)
+     (ispell-local-dictionary . fr)
+     (TeX-parse-self . t)
+     (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
