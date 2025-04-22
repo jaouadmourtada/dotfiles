@@ -125,6 +125,9 @@
 ;; kill line backwards (inverse of C-k, with s-backspace)
 (global-set-key (kbd "s-<backspace>") (kbd "M-0 C-k"))
 
+;; kill sexp before
+(global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
+
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 
 (global-set-key (kbd "M-q") 'indent-region)
