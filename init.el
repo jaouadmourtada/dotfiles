@@ -163,13 +163,13 @@
 ;; Change window (from Wind Move built-in library) : Cmd + arrow
 (windmove-default-keybindings 'super)
 
-;; Change buffer
-(global-set-key (kbd "C-M-<tab>") 'next-buffer)
-(global-set-key (kbd "C-M-S-<tab>") 'previous-buffer)
+;; ;; Change buffer
+;; (global-set-key (kbd "C-M-<tab>") 'next-buffer)
+;; (global-set-key (kbd "C-M-S-<tab>") 'previous-buffer)
 
-;; Change frame
-(global-set-key (kbd "M-s-<right>") 'other-frame)
-(global-set-key (kbd "M-s-<left>") 'other-frame)
+;; ;; Change frame
+;; (global-set-key (kbd "M-s-<right>") 'other-frame)
+;; (global-set-key (kbd "M-s-<left>") 'other-frame)
 
 ;; Window resize : fn + ctrl + arrow
 (global-set-key (kbd "C-<prior>") 'enlarge-window)
@@ -242,7 +242,8 @@
 (electric-pair-mode 1)
 
 ;; helps match braces '\{ \}'
-;; "After evaluation of this form, \ acts as a punctuation character rather than an escape character", see https://tex.stackexchange.com/questions/74100/matching-the-delimiters-and-in-auctex
+;; "After evaluation of this form, \ acts as a punctuation character rather than an escape character",
+;;  see https://tex.stackexchange.com/questions/74100/matching-the-delimiters-and-in-auctex
 ;; ! may lead to unexpected side effects
 ;; ideally, one should still treat '\' as an escape character, except when followed by {}
 ;; (add-hook 'TeX-mode-hook (lambda () (modify-syntax-entry ?\\ ".")))
@@ -311,7 +312,9 @@
   (interactive)
   (quit-window t))
 
-(define-key Info-mode-map (kbd "q") 'quit-window-kill-buffer)
+(with-eval-after-load 'info
+  (define-key Info-mode-map (kbd "q") 'quit-window-kill-buffer)
+  )
 (define-key Buffer-menu-mode-map (kbd "q") 'quit-window-kill-buffer)
 ;;(define-key debugger-mode-map (kbd "q") 'quit-window-kill-buffer)
 
@@ -388,7 +391,16 @@
   :bind (:map vertico-map
               ("<right>" . vertico-next)
               ("<left>" . vertico-previous)
-              ("C-f" . vertico-exit))
+              ("C-f" . vertico-exit)
+	      ;; make find-file behave like ido-find-file:
+	      ;; better behavior of C-DEL etc. in Vertico
+	      ("C-<backspace>" . backward-kill-sexp)
+	      ("M-<backspace>" . backward-kill-sexp)
+	      ;; ("DEL" . backward-kill-sexp)
+	      ;; ("DEL" . delete-backward-char)
+	      ;; RET does not open directory in dired
+	      ("RET" . vertico-directory-enter)
+	      )
   :custom
   (vertico-cycle t)
   :init
@@ -429,15 +441,6 @@
   ;; :init
   ;; (vertico-prescient-mode)
   )
-
-;; make find-file behave like ido-find-file
-
-;; C-DEL moves up a directory
-;;(define-key vertico-map (kbd "C-<backspace>") 'vertico-directory-up) ;;test
-;;(define-key vertico-map (kbd "M-<backspace>") 'vertico-directory-up)
-
-;; RET does not open directory in dired
-(define-key vertico-map (kbd "RET") 'vertico-directory-enter)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -874,26 +877,26 @@
 ;; do not ask for optional arguments
 (setq TeX-insert-macro-default-style 'mandatory-args-only)
 
-;; better DEL: deletes full \command
-(defun my/latex-smart-backspace ()
-  "Smart backspace: if point is just after a LaTeX command (\\command), delete the whole command."
-  (interactive)
-  (let ((end (point)))
-    (when (and (not (bobp))
-               (save-excursion
-                 (backward-word)
-                 (looking-at "\\\\[a-zA-Z]+")
-                 (= (match-end 0) end)))
-      ;; Delete whole \command
-      (let ((start (match-beginning 0)))
-        (delete-region start end)))
-    ;; Fallback to regular delete-backward
-    (when (eq (point) end)
-      (delete-backward-char 1))))
+;; ;; better DEL: deletes full \command
+;; (defun my/latex-smart-backspace ()
+;;   "Smart backspace: if point is just after a LaTeX command (\\command), delete the whole command."
+;;   (interactive)
+;;   (let ((end (point)))
+;;     (when (and (not (bobp))
+;;                (save-excursion
+;;                  (backward-word)
+;;                  (looking-at "\\\\[a-zA-Z]+")
+;;                  (= (match-end 0) end)))
+;;       ;; Delete whole \command
+;;       (let ((start (match-beginning 0)))
+;;         (delete-region start end)))
+;;     ;; Fallback to regular delete-backward
+;;     (when (eq (point) end)
+;;       (delete-backward-char 1))))
 
-;; Bind DEL in LaTeX-mode
-(with-eval-after-load 'latex
-  (define-key LaTeX-mode-map (kbd "DEL") #'my/latex-smart-backspace))
+;; ;; Bind DEL in LaTeX-mode
+;; (with-eval-after-load 'latex
+;;   (define-key LaTeX-mode-map (kbd "DEL") #'my/latex-smart-backspace))
 
 
 ;; Add backends provided by company-auctex to company-backends
@@ -950,10 +953,11 @@
 
 ;; RefTeX : add environment
 (setq reftex-label-alist
-      '(("lemma" ?l "lem:" "~\\ref{%s}" t ("lemma" "lemme" "lemmas"))
-      	("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème" "theorems") -3)
-      	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
-      	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition" "propositions"))
+      '(("theorem" ?t "thm:" "~\\ref{%s}" t ("theorem" "théorème" "theorems") -3)
+	("proposition" ?p "prop:" "~\\ref{%s}" t ("proposition" "propositions"))
+	("corollary" ?c "cor:" "~\\ref{%s}" t ("corollary" "corollaire") -2)
+	("lemma" ?l "lem:" "~\\ref{%s}" t ("lemma" "lemme" "lemmas"))
+      	("claim" ?m "cla:" "~\\ref{%s}" t ("claim" "claims"))
 	("fact" ?f "fac:" "~\\ref{%s}" nil ("fact" "facts" "fait"))
       	("definition" ?d "def:" "~\\ref{%s}" t ("definition" "définition"))
 	("remark" ?r "rem:" "~\\ref{%s}" nil ("remark" "remarque"))
@@ -965,10 +969,11 @@
 (add-hook 'LaTeX-mode-hook
 	  (lambda ()
 	    (LaTeX-add-environments
-	     '("lemma" LaTeX-env-label)
 	     '("theorem" LaTeX-env-label)
-	     '("corollary" LaTeX-env-label)
 	     '("proposition" LaTeX-env-label)
+	     '("corollary" LaTeX-env-label)
+	     '("lemma" LaTeX-env-label)
+	     '("claim" LaTeX-env-label)
 	     '("definition" LaTeX-env-label)
 	     )))
 
@@ -1236,17 +1241,20 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "a53f00556ab4c81a0618ab6589053d9e351312d37d9c9cf544e0c8edac2b63ab" "00445e6f15d31e9afaa23ed0d765850e9cd5e929be5e8e63b114a3346236c44c" "c433c87bd4b64b8ba9890e8ed64597ea0f8eb0396f4c9a9e01bd20a04d15d358" "0feb7052df6cfc1733c1087d3876c26c66410e5f1337b039be44cb406b6187c6" default))
+   '("4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3"
+     "a53f00556ab4c81a0618ab6589053d9e351312d37d9c9cf544e0c8edac2b63ab"
+     "00445e6f15d31e9afaa23ed0d765850e9cd5e929be5e8e63b114a3346236c44c"
+     "c433c87bd4b64b8ba9890e8ed64597ea0f8eb0396f4c9a9e01bd20a04d15d358"
+     "0feb7052df6cfc1733c1087d3876c26c66410e5f1337b039be44cb406b6187c6"
+     default))
  '(markdown-command "/usr/local/bin/pandoc")
  '(org-agenda-files
-   '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org" "~/Dropbox/perso/todo-projects.org"))
- '(package-selected-packages
-   '(corfu merlin merlin-company tuareg citar vertico-prescient prescient consult marginalia use-package orderless vertico counsel ivy swiper nlinum company with-editor powerline solarized-theme magit default-text-scale outline-magic yasnippet company-web company-auctex web-mode markdown-mode elpy exec-path-from-shell ido-sort-mtime ido-ubiquitous ido-vertical-mode s smex moe-theme hlinum company-statistics caml auctex aggressive-indent frame-fns frame-cmds outline-magic ido-completing-read+ jemdoc-mode))
+   '("~/Dropbox/taf/todo-these.org" "~/Dropbox/perso/todo-new.org"
+     "~/Dropbox/perso/todo-projects.org"))
+ '(package-selected-packages nil)
  '(safe-local-variable-values
-   '((ispell-local-dictionary . français)
-     (ispell-local-dictionary . fr)
-     (TeX-parse-self . t)
-     (TeX-auto-save . t))))
+   '((ispell-local-dictionary . français) (ispell-local-dictionary . fr)
+     (TeX-parse-self . t) (TeX-auto-save . t))))
 ;; also: waher-theme, yasnippet, warm-night-theme, gotham-theme,
 ;; zerodark-theme, zenburn-theme, popup
 (custom-set-faces
